@@ -110,11 +110,45 @@ export interface ActivityEntry {
   detail: string;
 }
 
+/** A raw markdown document read from disk (for rendering as-is). */
+export interface RawDocument {
+  path: string;
+  content: string;
+}
+
+/** One archived change, summarized from its directory on disk. */
+export interface ArchivedChangeSummary {
+  /** Full archive directory name, e.g. `2026-07-10-add-opsx-ui-viewer`. */
+  id: string;
+  /** Change name with the date prefix stripped. */
+  name: string;
+  /** Archive date parsed from the `YYYY-MM-DD-` prefix, if present. */
+  archivedDate: string | null;
+  tasks: TaskProgress;
+}
+
+export interface ArchivedArtifact {
+  id: string;
+  content: string;
+}
+
+export interface ArchivedDelta {
+  spec: string;
+  content: string;
+}
+
+/** An archived change opened for reading — artifacts and deltas as raw markdown. */
+export interface ArchivedChangeDetail extends ArchivedChangeSummary {
+  artifacts: ArchivedArtifact[];
+  deltas: ArchivedDelta[];
+}
+
 /** The full board-level snapshot pushed to clients on every change. */
 export interface Snapshot {
   project: ProjectView;
   changes: ChangeSummary[];
   specs: SpecSummary[];
+  archived: ArchivedChangeSummary[];
   generatedAt: string;
 }
 

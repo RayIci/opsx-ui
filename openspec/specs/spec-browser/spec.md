@@ -29,3 +29,11 @@ The system SHALL update the displayed specification automatically when its under
 #### Scenario: A spec changes while being viewed
 - **WHEN** a specification file changes while it is displayed
 - **THEN** the displayed content updates without a manual refresh
+
+### Requirement: Markdown rendering of spec content
+The system SHALL render a specification's requirements and scenarios as formatted markdown rather than as boxed monospaced text.
+
+#### Scenario: Viewing a capability's requirements
+- **WHEN** a user views a capability in the spec browser
+- **THEN** its requirements and scenarios are rendered as formatted markdown
+- **AND** they are not displayed inside monospaced boxes

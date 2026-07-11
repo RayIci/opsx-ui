@@ -1,42 +1,37 @@
 import type { Requirement } from "@shared/contracts";
+import { Markdown } from "@/components/Markdown";
 import { cn } from "@/lib/utils";
 
 interface Props {
   requirement: Requirement;
+  /** Optional operation accent color for a subtle left rule (no box). */
   accent?: string;
   className?: string;
 }
 
+/** Compose a requirement's structured fields back into a markdown document. */
+function toMarkdown(requirement: Requirement): string {
+  const parts: string[] = [];
+  if (requirement.name) parts.push(`#### ${requirement.name}`);
+  if (requirement.text) parts.push(requirement.text);
+  for (const scenario of requirement.scenarios) {
+    if (scenario.rawText.trim()) parts.push(scenario.rawText.trim());
+  }
+  return parts.join("\n\n");
+}
+
 /**
- * Renders a requirement as the source-of-truth document it is: mono type for
- * the normative text and its WHEN/THEN scenarios. Shared by the spec browser
- * and the diff so both read identically.
+ * Renders a requirement as a document (markdown typography), not a boxed card.
+ * Operation semantics are carried by a subtle colored left-rule rather than a
+ * filled box (design D2). Shared by the spec browser and the diff.
  */
 export function RequirementView({ requirement, accent, className }: Props) {
   return (
     <div
-      className={cn(
-        "border-border bg-card rounded-lg border p-3",
-        className,
-      )}
+      className={cn("py-1", accent ? "pl-4" : undefined, className)}
       style={accent ? { borderLeft: `2px solid ${accent}` } : undefined}
     >
-      {requirement.name && (
-        <p className="text-foreground mb-1 text-xs font-semibold">{requirement.name}</p>
-      )}
-      <p className="font-mono text-[0.8rem] leading-relaxed">{requirement.text}</p>
-      {requirement.scenarios.length > 0 && (
-        <ul className="mt-2 flex flex-col gap-2">
-          {requirement.scenarios.map((scenario, i) => (
-            <li
-              key={i}
-              className="text-muted-foreground border-border/70 whitespace-pre-wrap border-l pl-3 font-mono text-[0.72rem] leading-relaxed"
-            >
-              {scenario.rawText}
-            </li>
-          ))}
-        </ul>
-      )}
+      <Markdown>{toMarkdown(requirement)}</Markdown>
     </div>
   );
 }

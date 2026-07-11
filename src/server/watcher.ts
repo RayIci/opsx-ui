@@ -48,7 +48,6 @@ export class OpenSpecWatcher {
       ignoreInitial: true,
       usePolling: this.usePolling,
       awaitWriteFinish: { stabilityThreshold: 80, pollInterval: 20 },
-      ignored: (p) => p.includes(`${path.sep}archive${path.sep}`),
     });
     this.watcher
       .on("add", (p) => this.handle(p, "created"))
@@ -87,6 +86,15 @@ export class OpenSpecWatcher {
       kind,
     };
     const verb = kind === "created" ? "added" : kind === "removed" ? "removed" : "updated";
+
+    if (rel[0] === "changes" && rel[1] === "archive" && rel[2]) {
+      return {
+        ...base,
+        targetType: "change",
+        targetId: rel[2],
+        detail: kind === "created" ? "Change archived" : `Archive ${verb}`,
+      };
+    }
 
     if (rel[0] === "changes" && rel[1]) {
       const change = rel[1];

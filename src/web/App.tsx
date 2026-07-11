@@ -5,15 +5,20 @@ import { ChangeBoard } from "@/features/change-board/ChangeBoard";
 import { ActivityFeed } from "@/features/activity-feed/ActivityFeed";
 import { SpecDiff } from "@/features/spec-diff/SpecDiff";
 import { SpecDetail } from "@/features/spec-browser/SpecDetail";
+import { ArchiveList } from "@/features/archive-browser/ArchiveList";
+import { ArchivedChange } from "@/features/archive-browser/ArchivedChange";
 import { ProjectGate } from "@/features/project-gate/ProjectGate";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, RefreshCw, Loader2 } from "lucide-react";
+import { ArrowLeft, RefreshCw, Loader2, Archive } from "lucide-react";
 
 type View =
   | { kind: "board" }
   | { kind: "change"; changeId: string }
-  | { kind: "spec"; specId: string };
+  | { kind: "spec"; specId: string }
+  | { kind: "archive" }
+  | { kind: "archived"; id: string };
 
 export default function App() {
   const [bootstrap, setBootstrap] = useState<Bootstrap | null>(null);
@@ -48,6 +53,9 @@ export default function App() {
 
   const snapshot = live.snapshot;
   const isLive = live.connection === "open";
+  const archivedCount = snapshot?.archived.length ?? 0;
+  const backTarget: View | null =
+    view.kind === "archived" ? { kind: "archive" } : view.kind === "board" ? null : { kind: "board" };
 
   return (
     <div className="min-h-dvh">
@@ -55,8 +63,10 @@ export default function App() {
         projectName={bootstrap.project.name}
         version={bootstrap.version}
         live={isLive}
-        canGoBack={view.kind !== "board"}
-        onBack={() => setView({ kind: "board" })}
+        archivedCount={archivedCount}
+        onArchive={() => setView({ kind: "archive" })}
+        back={backTarget}
+        onBack={() => backTarget && setView(backTarget)}
         onRefresh={() => void api.refresh()}
       />
 
@@ -70,12 +80,15 @@ export default function App() {
               onOpenSpec={(specId) => setView({ kind: "spec", specId })}
             />
           )}
-          {view.kind === "change" && (
-            <SpecDiff changeId={view.changeId} revision={live.pulse} />
+          {view.kind === "change" && <SpecDiff changeId={view.changeId} revision={live.pulse} />}
+          {view.kind === "spec" && <SpecDetail specId={view.specId} revision={live.pulse} />}
+          {view.kind === "archive" && snapshot && (
+            <ArchiveList
+              archived={snapshot.archived}
+              onOpen={(id) => setView({ kind: "archived", id })}
+            />
           )}
-          {view.kind === "spec" && (
-            <SpecDetail specId={view.specId} revision={live.pulse} />
-          )}
+          {view.kind === "archived" && <ArchivedChange id={view.id} revision={live.pulse} />}
           {view.kind === "board" && !snapshot && (
             <div className="text-muted-foreground flex justify-center py-24">
               <Loader2 className="size-5 animate-spin" />
@@ -95,41 +108,49 @@ function Header({
   projectName,
   version,
   live,
-  canGoBack,
+  archivedCount,
+  onArchive,
+  back,
   onBack,
   onRefresh,
 }: {
   projectName: string;
   version: string | null;
   live: boolean;
-  canGoBack: boolean;
+  archivedCount: number;
+  onArchive: () => void;
+  back: View | null;
   onBack: () => void;
   onRefresh: () => void;
 }) {
   return (
     <header className="border-border bg-background/80 sticky top-0 z-10 border-b backdrop-blur">
       <div className="mx-auto flex max-w-[1400px] items-center gap-3 px-6 py-3">
-        {canGoBack ? (
+        {back ? (
           <Button variant="ghost" size="sm" onClick={onBack} className="-ml-2">
-            <ArrowLeft /> Board
+            <ArrowLeft /> Back
           </Button>
         ) : (
-          <span className="font-display text-sm font-bold tracking-tight">opsx-ui</span>
+          <span className="font-display text-base font-semibold tracking-tight">opsx-ui</span>
         )}
         <div className="ml-1 flex items-baseline gap-2">
           <span className="font-mono text-sm">{projectName}</span>
           {version && <span className="text-muted-foreground text-xs">openspec {version}</span>}
         </div>
         <div className="ml-auto flex items-center gap-3">
+          <Button variant="ghost" size="sm" onClick={onArchive} className="gap-1.5">
+            <Archive className="size-4" /> Archive
+            {archivedCount > 0 && (
+              <span className="text-muted-foreground tabular-nums">{archivedCount}</span>
+            )}
+          </Button>
           <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
             <span
-              className={cn(
-                "size-2 rounded-full",
-                live ? "bg-op-added" : "bg-op-modified animate-pulse",
-              )}
+              className={cn("size-2 rounded-full", live ? "bg-op-added" : "bg-op-modified animate-pulse")}
             />
             {live ? "live" : "reconnecting"}
           </span>
+          <ThemeToggle />
           <Button variant="ghost" size="icon" onClick={onRefresh} title="Refresh">
             <RefreshCw />
           </Button>

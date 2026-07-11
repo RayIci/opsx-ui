@@ -1,14 +1,18 @@
 import {
   CliOpenSpecSource,
   ExecCliRunner,
+  FilesystemSource,
   SnapshotService,
+  type ArchiveSource,
   type OpenSpecSource,
 } from "../core/index.js";
 import { OpenSpecWatcher } from "./watcher.js";
 import type {
   ActivityEntry,
+  ArchivedChangeDetail,
   DeltaView,
   ProjectView,
+  RawDocument,
   Snapshot,
   SpecView,
   StatusView,
@@ -27,6 +31,7 @@ export interface SessionEvents {
  */
 export class ViewerSession {
   private readonly source: OpenSpecSource;
+  private readonly archive: ArchiveSource;
   private readonly snapshots: SnapshotService;
   private readonly watcher: OpenSpecWatcher;
   private current: Snapshot | null = null;
@@ -39,7 +44,8 @@ export class ViewerSession {
   ) {
     const runner = new ExecCliRunner({ cwd: project.root });
     this.source = new CliOpenSpecSource(runner, { storeId: project.storeId });
-    this.snapshots = new SnapshotService(this.source);
+    this.archive = new FilesystemSource(project.root);
+    this.snapshots = new SnapshotService(this.source, this.archive);
     this.watcher = new OpenSpecWatcher(project.root, {
       usePolling: options.usePolling,
     });
@@ -87,6 +93,14 @@ export class ViewerSession {
 
   getStatus(changeId: string): Promise<StatusView> {
     return this.source.getStatus(changeId);
+  }
+
+  getArchivedChange(id: string): Promise<ArchivedChangeDetail> {
+    return this.archive.getArchivedChange(id);
+  }
+
+  getRawDocument(relativePath: string): Promise<RawDocument> {
+    return this.archive.getRawDocument(relativePath);
   }
 
   async dispose(): Promise<void> {

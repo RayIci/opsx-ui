@@ -145,6 +145,15 @@ export class ViewerServer {
       res.json(await session.getStatus(req.params.id));
     }));
 
+    api.get("/archive/:id", this.guarded(async (req, res, session) => {
+      res.json(await session.getArchivedChange(req.params.id));
+    }));
+
+    api.get("/document", this.guarded(async (req, res, session) => {
+      const rel = typeof req.query.path === "string" ? req.query.path : "";
+      res.json(await session.getRawDocument(rel));
+    }));
+
     this.app.use("/api", api);
   }
 

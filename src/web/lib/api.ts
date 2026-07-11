@@ -1,4 +1,5 @@
 import type {
+  ArchivedChangeDetail,
   DeltaView,
   ProjectView,
   Snapshot,
@@ -47,4 +48,7 @@ export const api = {
 
   status: (changeId: string) =>
     fetch(`/api/changes/${encodeURIComponent(changeId)}/status`).then(json<StatusView>),
+
+  archived: (id: string) =>
+    fetch(`/api/archive/${encodeURIComponent(id)}`).then(json<ArchivedChangeDetail>),
 };

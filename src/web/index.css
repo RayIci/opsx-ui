@@ -39,9 +39,9 @@
   --op-removed: oklch(0.637 0.208 25.331);
   --op-removed-soft: oklch(0.637 0.208 25.331 / 12%);
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Space Grotesk", var(--font-sans);
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", "Figtree", sans-serif;
+  --font-mono: "Spline Sans Mono", ui-monospace, monospace;
 }
 
 .dark {
@@ -122,8 +122,69 @@
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.01em;
+    font-optical-sizing: auto;
+    letter-spacing: -0.005em;
   }
+}
+
+/* Markdown document typography (shared by spec browser + diff). */
+@layer components {
+  .md-prose {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-foreground);
+  }
+  .md-prose > :first-child { margin-top: 0; }
+  .md-prose > :last-child { margin-bottom: 0; }
+  .md-prose h1, .md-prose h2, .md-prose h3, .md-prose h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.25;
+    margin: 1.25em 0 0.5em;
+  }
+  .md-prose h1 { font-size: 1.4rem; }
+  .md-prose h2 { font-size: 1.15rem; }
+  .md-prose h3 { font-size: 1rem; }
+  .md-prose h4 {
+    font-size: 0.8rem;
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-muted-foreground);
+  }
+  .md-prose p { margin: 0.6em 0; }
+  .md-prose strong { font-weight: 600; }
+  .md-prose ul, .md-prose ol { margin: 0.5em 0; padding-left: 1.25em; }
+  .md-prose ul { list-style: disc; }
+  .md-prose ol { list-style: decimal; }
+  .md-prose li { margin: 0.2em 0; }
+  .md-prose li::marker { color: var(--color-muted-foreground); }
+  .md-prose a { color: var(--color-primary); text-decoration: underline; text-underline-offset: 2px; }
+  .md-prose code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    background: var(--color-muted);
+    padding: 0.1em 0.35em;
+    border-radius: var(--radius-sm);
+  }
+  .md-prose pre {
+    font-family: var(--font-mono);
+    background: var(--color-muted);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin: 0.75em 0;
+  }
+  .md-prose pre code { background: transparent; padding: 0; }
+  .md-prose blockquote {
+    border-left: 2px solid var(--color-border);
+    padding-left: 0.9em;
+    color: var(--color-muted-foreground);
+    margin: 0.75em 0;
+  }
+  .md-prose table { border-collapse: collapse; margin: 0.75em 0; font-size: 0.82rem; }
+  .md-prose th, .md-prose td { border: 1px solid var(--color-border); padding: 0.35em 0.6em; text-align: left; }
+  .md-prose hr { border: 0; border-top: 1px solid var(--color-border); margin: 1em 0; }
 }
 
 @keyframes pulse-once {

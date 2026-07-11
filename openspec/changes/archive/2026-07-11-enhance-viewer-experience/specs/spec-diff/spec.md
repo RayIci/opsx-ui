@@ -1,9 +1,4 @@
-# spec-diff Specification
-
-## Purpose
-The view that shows a change's proposed spec deltas against the current specification — selectable between current-only, proposed-only, and side-by-side — grouped and colored by operation (ADDED / MODIFIED / REMOVED), rendered as markdown, and updating live.
-
-## Requirements
+## ADDED Requirements
 
 ### Requirement: View mode selection
 The system SHALL let the user switch the diff between three view modes — current spec only, proposed changes only, and side-by-side — via a control on the diff view.
@@ -20,6 +15,8 @@ The system SHALL let the user switch the diff between three view modes — curre
 #### Scenario: Default mode
 - **WHEN** the diff view is first opened for a change
 - **THEN** it opens in side-by-side mode
+
+## MODIFIED Requirements
 
 ### Requirement: Side-by-side current-versus-proposed view
 The system SHALL provide a side-by-side view mode that presents a change's proposed spec deltas beside the current specification, and SHALL use it as the default mode.
@@ -40,17 +37,3 @@ The system SHALL group proposed deltas by operation and visually distinguish ADD
 #### Scenario: Delta content reads as a document
 - **WHEN** a delta's requirement and scenarios are displayed
 - **THEN** their text is rendered as formatted markdown, not inside monospaced boxes
-
-### Requirement: Diff reflects live state
-The system SHALL update the diff view automatically when the change's delta or the current spec changes.
-
-#### Scenario: A delta changes while the diff is open
-- **WHEN** a change's delta file or the affected spec changes while the diff is displayed
-- **THEN** the side-by-side view updates without a manual refresh
-
-### Requirement: Empty and partial delta handling
-The system SHALL render a diff view without error when a change has no deltas for a given spec.
-
-#### Scenario: Change has no deltas for the selected spec
-- **WHEN** a user opens the diff for a change that does not alter the selected spec
-- **THEN** the proposed side shows an empty state rather than an error
