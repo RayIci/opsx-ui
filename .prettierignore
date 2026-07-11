@@ -1,0 +1,8 @@
+dist
+node_modules
+package-lock.json
+
+# Tool-managed content — not project source.
+.agents
+.claude
+openspec
