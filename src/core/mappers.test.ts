@@ -45,9 +45,9 @@ describe("mapChangeList", () => {
 
 describe("mapSpecList / mapSpec", () => {
   it("uses id as title fallback", () => {
-    expect(mapSpecList({ specs: [{ id: "shortlinks", requirementCount: 2 }] })).toEqual([
-      { id: "shortlinks", title: "shortlinks", requirementCount: 2 },
-    ]);
+    expect(
+      mapSpecList({ specs: [{ id: "shortlinks", requirementCount: 2 }] }),
+    ).toEqual([{ id: "shortlinks", title: "shortlinks", requirementCount: 2 }]);
   });
 
   it("expands requirements and scenarios", () => {
@@ -56,7 +56,10 @@ describe("mapSpecList / mapSpec", () => {
       title: "shortlinks",
       overview: "Create and resolve short links.",
       requirements: [
-        { text: "The system SHALL create a short code.", scenarios: [{ rawText: "- WHEN x" }] },
+        {
+          text: "The system SHALL create a short code.",
+          scenarios: [{ rawText: "- WHEN x" }],
+        },
       ],
     });
     expect(spec.overview).toBe("Create and resolve short links.");
@@ -76,7 +79,10 @@ describe("mapDeltas", () => {
           spec: "shortlinks",
           operation: "ADDED",
           description: "Add requirement: …",
-          requirement: { text: "The system SHALL expose total click count.", scenarios: [] },
+          requirement: {
+            text: "The system SHALL expose total click count.",
+            scenarios: [],
+          },
         },
         {
           spec: "shortlinks",
@@ -92,7 +98,9 @@ describe("mapDeltas", () => {
   });
 
   it("falls back to a safe operation for unknown values", () => {
-    const view = mapDeltas({ deltas: [{ spec: "s", operation: "WEIRD", description: "" }] });
+    const view = mapDeltas({
+      deltas: [{ spec: "s", operation: "WEIRD", description: "" }],
+    });
     expect(view.deltas[0].operation).toBe("MODIFIED");
     expect(view.deltas[0].requirement).toBeNull();
   });
@@ -115,16 +123,26 @@ describe("mapStatus", () => {
 
 describe("mapValidation", () => {
   it("maps validation items and folds to a status", () => {
-    const items = mapValidation({ items: [{ id: "c", valid: true, issues: [] }] });
+    const items = mapValidation({
+      items: [{ id: "c", valid: true, issues: [] }],
+    });
     expect(items[0].valid).toBe(true);
     expect(toValidationStatus(items[0])).toBe("valid");
     expect(toValidationStatus(undefined)).toBe("unknown");
-    expect(toValidationStatus({ id: "x", valid: false, issues: [] })).toBe("invalid");
+    expect(toValidationStatus({ id: "x", valid: false, issues: [] })).toBe(
+      "invalid",
+    );
   });
 
   it("normalizes string and object issues", () => {
     const [item] = mapValidation({
-      items: [{ id: "c", valid: false, issues: ["bad thing", { level: "warn", message: "meh" }] }],
+      items: [
+        {
+          id: "c",
+          valid: false,
+          issues: ["bad thing", { level: "warn", message: "meh" }],
+        },
+      ],
     });
     expect(item.issues[0]).toEqual({ level: "error", message: "bad thing" });
     expect(item.issues[1]).toEqual({ level: "warn", message: "meh" });

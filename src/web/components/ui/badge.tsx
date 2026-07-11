@@ -12,10 +12,8 @@ const badgeVariants = cva(
         outline: "text-foreground border-border",
         added:
           "border-transparent bg-op-added-soft text-op-added [--tw-text-opacity:1]",
-        modified:
-          "border-transparent bg-op-modified-soft text-op-modified",
-        removed:
-          "border-transparent bg-op-removed-soft text-op-removed",
+        modified: "border-transparent bg-op-modified-soft text-op-modified",
+        removed: "border-transparent bg-op-removed-soft text-op-removed",
       },
     },
     defaultVariants: { variant: "default" },

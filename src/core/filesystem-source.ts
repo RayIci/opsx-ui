@@ -57,7 +57,10 @@ export class FilesystemSource implements ArchiveSource {
     const dir = this.resolveArchiveEntry(id);
     const [summary] = (await this.listArchived()).filter((s) => s.id === id);
     if (!summary) {
-      throw new OpenSpecCliError(`Archived change not found: ${id}`, ["archive", id]);
+      throw new OpenSpecCliError(`Archived change not found: ${id}`, [
+        "archive",
+        id,
+      ]);
     }
 
     const artifacts: ArchivedArtifact[] = [];
@@ -82,7 +85,9 @@ export class FilesystemSource implements ArchiveSource {
     const capabilities = await this.safeReaddir(specsDir);
     const deltas: ArchivedDelta[] = [];
     for (const cap of capabilities) {
-      const content = await this.readIfExists(path.join(specsDir, cap, "spec.md"));
+      const content = await this.readIfExists(
+        path.join(specsDir, cap, "spec.md"),
+      );
       if (content !== null) deltas.push({ spec: cap, content });
     }
     return deltas;
@@ -117,7 +122,9 @@ export class FilesystemSource implements ArchiveSource {
     const resolved = path.resolve(base, relativePath);
     const rel = path.relative(base, resolved);
     if (rel.startsWith("..") || path.isAbsolute(rel)) {
-      throw new OpenSpecCliError(`Path escapes openspec/: ${relativePath}`, [relativePath]);
+      throw new OpenSpecCliError(`Path escapes openspec/: ${relativePath}`, [
+        relativePath,
+      ]);
     }
     return resolved;
   }

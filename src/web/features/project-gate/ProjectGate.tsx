@@ -36,7 +36,9 @@ export function ProjectGate({ bootstrap, onOpened }: Props) {
   return (
     <div className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center gap-6 px-6 py-16">
       <div className="text-center">
-        <h1 className="font-display text-2xl font-bold tracking-tight">opsx-ui</h1>
+        <h1 className="font-display text-2xl font-bold tracking-tight">
+          opsx-ui
+        </h1>
         <p className="text-muted-foreground mt-1 text-sm">
           Open an OpenSpec project to view its specs and changes.
         </p>
@@ -47,9 +49,14 @@ export function ProjectGate({ bootstrap, onOpened }: Props) {
           <CardContent className="flex items-center justify-between gap-4">
             <div className="min-w-0">
               <p className="text-sm font-medium">Current directory</p>
-              <p className="text-muted-foreground truncate font-mono text-xs">{bootstrap.cwd}</p>
+              <p className="text-muted-foreground truncate font-mono text-xs">
+                {bootstrap.cwd}
+              </p>
             </div>
-            <Button onClick={() => open({ dir: bootstrap.cwd })} disabled={busy}>
+            <Button
+              onClick={() => open({ dir: bootstrap.cwd })}
+              disabled={busy}
+            >
               <FolderOpen /> Open
             </Button>
           </CardContent>
@@ -60,10 +67,12 @@ export function ProjectGate({ bootstrap, onOpened }: Props) {
             <TriangleAlert className="text-op-modified mt-0.5 size-4 shrink-0" />
             <div className="min-w-0 text-sm">
               <p className="font-medium">No OpenSpec here</p>
-              <p className="text-muted-foreground truncate font-mono text-xs">{bootstrap.cwd}</p>
+              <p className="text-muted-foreground truncate font-mono text-xs">
+                {bootstrap.cwd}
+              </p>
               <p className="text-muted-foreground mt-1 text-xs">
-                Run <code className="font-mono">openspec init</code> there, or open another
-                project below.
+                Run <code className="font-mono">openspec init</code> there, or
+                open another project below.
               </p>
             </div>
           </CardContent>
@@ -83,7 +92,9 @@ export function ProjectGate({ bootstrap, onOpened }: Props) {
               className="border-border hover:border-ring/60 hover:bg-accent/40 flex items-center justify-between rounded-lg border px-4 py-2.5 text-left transition-colors disabled:opacity-50"
             >
               <span className="text-sm font-medium">{store.name}</span>
-              <span className="text-muted-foreground truncate font-mono text-xs">{store.id}</span>
+              <span className="text-muted-foreground truncate font-mono text-xs">
+                {store.id}
+              </span>
             </button>
           ))}
         </div>
@@ -101,7 +112,11 @@ export function ProjectGate({ bootstrap, onOpened }: Props) {
             className="border-input bg-background focus-visible:ring-ring h-9 flex-1 rounded-md border px-3 font-mono text-xs outline-none focus-visible:ring-2"
             placeholder="/path/to/project"
           />
-          <Button variant="outline" onClick={() => open({ dir })} disabled={busy}>
+          <Button
+            variant="outline"
+            onClick={() => open({ dir })}
+            disabled={busy}
+          >
             Open
           </Button>
         </div>

@@ -24,16 +24,22 @@ describe("compareSemver", () => {
 
 describe("CliOpenSpecSource", () => {
   it("verifies a supported version and rejects old ones", async () => {
-    const ok = new CliOpenSpecSource(new FakeRunner({ "--version": "1.5.0\n" }));
+    const ok = new CliOpenSpecSource(
+      new FakeRunner({ "--version": "1.5.0\n" }),
+    );
     await expect(ok.version()).resolves.toBe("1.5.0");
 
-    const old = new CliOpenSpecSource(new FakeRunner({ "--version": "1.4.0\n" }));
+    const old = new CliOpenSpecSource(
+      new FakeRunner({ "--version": "1.4.0\n" }),
+    );
     await expect(old.version()).rejects.toBeInstanceOf(UnsupportedCliError);
   });
 
   it("calls the right commands and maps output", async () => {
     const runner = new FakeRunner({
-      list: JSON.stringify({ changes: [{ name: "c", completedTasks: 1, totalTasks: 2 }] }),
+      list: JSON.stringify({
+        changes: [{ name: "c", completedTasks: 1, totalTasks: 2 }],
+      }),
     });
     const source = new CliOpenSpecSource(runner);
     const changes = await source.listChanges();
@@ -45,6 +51,12 @@ describe("CliOpenSpecSource", () => {
     const runner = new FakeRunner({ list: JSON.stringify({ specs: [] }) });
     const source = new CliOpenSpecSource(runner, { storeId: "acme" });
     await source.listSpecs();
-    expect(runner.calls[0]).toEqual(["list", "--specs", "--json", "--store", "acme"]);
+    expect(runner.calls[0]).toEqual([
+      "list",
+      "--specs",
+      "--json",
+      "--store",
+      "acme",
+    ]);
   });
 });

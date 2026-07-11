@@ -18,7 +18,12 @@ export function ActivityFeed({ entries, live }: Props) {
   return (
     <aside className="flex h-full flex-col">
       <div className="mb-3 flex items-center gap-2">
-        <Radio className={cn("size-4", live ? "text-op-added" : "text-muted-foreground")} />
+        <Radio
+          className={cn(
+            "size-4",
+            live ? "text-op-added" : "text-muted-foreground",
+          )}
+        />
         <h2 className="text-sm font-semibold">Activity</h2>
         <span
           className={cn(
@@ -43,10 +48,14 @@ export function ActivityFeed({ entries, live }: Props) {
                   key={entry.id}
                   className="hover:bg-accent/40 flex items-start gap-2.5 rounded-md px-2 py-1.5"
                 >
-                  <kind.Icon className={cn("mt-0.5 size-3.5 shrink-0", kind.color)} />
+                  <kind.Icon
+                    className={cn("mt-0.5 size-3.5 shrink-0", kind.color)}
+                  />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs">
-                      <span className="text-muted-foreground">{entry.targetType}</span>{" "}
+                      <span className="text-muted-foreground">
+                        {entry.targetType}
+                      </span>{" "}
                       <span className="font-mono">{entry.targetId}</span>
                     </p>
                     <p className="text-muted-foreground truncate text-[0.7rem]">

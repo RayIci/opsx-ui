@@ -50,8 +50,15 @@ export function ChangeCard({ change, onOpen }: Props) {
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         <div className="flex items-center justify-between text-xs">
-          <span className="text-muted-foreground capitalize">{change.status}</span>
-          <span className={cn("tabular-nums", done ? "text-op-added" : "text-muted-foreground")}>
+          <span className="text-muted-foreground capitalize">
+            {change.status}
+          </span>
+          <span
+            className={cn(
+              "tabular-nums",
+              done ? "text-op-added" : "text-muted-foreground",
+            )}
+          >
             {completed}/{total} tasks
           </span>
         </div>

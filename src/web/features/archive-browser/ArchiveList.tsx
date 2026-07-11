@@ -13,15 +13,20 @@ export function ArchiveList({ archived, onOpen }: Props) {
     <div className="flex flex-col gap-4">
       <div className="flex items-baseline justify-between">
         <h1 className="font-display text-xl font-semibold">Archive</h1>
-        <span className="text-muted-foreground text-sm tabular-nums">{archived.length}</span>
+        <span className="text-muted-foreground text-sm tabular-nums">
+          {archived.length}
+        </span>
       </div>
 
       {archived.length === 0 ? (
         <div className="border-border text-muted-foreground flex flex-col items-center gap-2 rounded-xl border border-dashed py-16 text-center">
           <ArchiveIcon className="size-5" />
-          <p className="text-foreground text-sm font-medium">Nothing archived yet</p>
+          <p className="text-foreground text-sm font-medium">
+            Nothing archived yet
+          </p>
           <p className="max-w-xs text-xs">
-            Completed changes moved to <code className="font-mono">changes/archive/</code> appear here.
+            Completed changes moved to{" "}
+            <code className="font-mono">changes/archive/</code> appear here.
           </p>
         </div>
       ) : (
@@ -46,12 +51,17 @@ export function ArchiveList({ archived, onOpen }: Props) {
                   <ArchiveIcon className="text-muted-foreground size-4 shrink-0" />
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">{change.archivedDate ?? "—"}</span>
+                  <span className="text-muted-foreground">
+                    {change.archivedDate ?? "—"}
+                  </span>
                   <span className="text-muted-foreground tabular-nums">
                     {change.tasks.completed}/{change.tasks.total} tasks
                   </span>
                 </div>
-                <Progress value={change.tasks.completed} max={change.tasks.total} />
+                <Progress
+                  value={change.tasks.completed}
+                  max={change.tasks.total}
+                />
               </CardContent>
             </Card>
           ))}

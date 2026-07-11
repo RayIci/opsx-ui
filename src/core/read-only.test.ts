@@ -29,7 +29,14 @@ class RecordingRunner implements CliRunner {
     this.commands.push(args.find((a) => !a.startsWith("-")) ?? args[0]);
     // Minimal valid JSON so every mapper is exercised.
     return Promise.resolve(
-      JSON.stringify({ changes: [], specs: [], deltas: [], artifacts: [], items: [], requirements: [] }),
+      JSON.stringify({
+        changes: [],
+        specs: [],
+        deltas: [],
+        artifacts: [],
+        items: [],
+        requirements: [],
+      }),
     );
   }
 }

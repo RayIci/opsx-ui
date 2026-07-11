@@ -7,7 +7,9 @@ export const OPERATION_ORDER: DeltaOperation[] = [
   "RENAMED",
 ];
 
-export function operationBadge(op: DeltaOperation): "added" | "modified" | "removed" {
+export function operationBadge(
+  op: DeltaOperation,
+): "added" | "modified" | "removed" {
   switch (op) {
     case "ADDED":
       return "added";

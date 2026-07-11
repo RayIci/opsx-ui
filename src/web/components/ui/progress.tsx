@@ -10,7 +10,10 @@ export function Progress({ value, max, className }: ProgressProps) {
   const pct = max > 0 ? Math.round((value / max) * 100) : 0;
   return (
     <div
-      className={cn("bg-secondary h-1.5 w-full overflow-hidden rounded-full", className)}
+      className={cn(
+        "bg-secondary h-1.5 w-full overflow-hidden rounded-full",
+        className,
+      )}
       role="progressbar"
       aria-valuenow={value}
       aria-valuemax={max}

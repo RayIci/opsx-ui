@@ -2,7 +2,7 @@
 
 A read-only, live-updating **web viewer for everything OpenSpec touches** — a
 browser home for your specs, changes, and proposed deltas that replaces the
-`openspec view` TUI and updates *as agents work*.
+`openspec view` TUI and updates _as agents work_.
 
 > opsx-ui only **reads** OpenSpec state. It never writes to, or mutates, any
 > project's `openspec/` directory. Driving agents (propose / apply / archive) is
@@ -27,12 +27,12 @@ opsx-ui -g              # global mode: skip cwd, show the project picker
 
 Options:
 
-| Flag             | Meaning                                                   |
-| ---------------- | --------------------------------------------------------- |
-| `-g, --global`   | Skip the current directory and open the project picker.   |
-| `-p, --port <n>` | Preferred port (auto-increments if taken). Default 4573.  |
-| `--poll`         | Use filesystem polling (WSL / network mounts).            |
-| `--no-open`      | Don't open a browser automatically.                       |
+| Flag             | Meaning                                                  |
+| ---------------- | -------------------------------------------------------- |
+| `-g, --global`   | Skip the current directory and open the project picker.  |
+| `-p, --port <n>` | Preferred port (auto-increments if taken). Default 4573. |
+| `--poll`         | Use filesystem polling (WSL / network mounts).           |
+| `--no-open`      | Don't open a browser automatically.                      |
 
 If the current directory has no `openspec/`, opsx-ui offers to point you at
 another project or a registered store. Running it in a project with `openspec/`

@@ -105,7 +105,9 @@ export class ViewerServer {
       try {
         const project = await this.resolveOpenRequest(req.body ?? {});
         if (!project) {
-          res.status(400).json({ error: "No openspec/ found at that location." });
+          res
+            .status(400)
+            .json({ error: "No openspec/ found at that location." });
           return;
         }
         await this.openProject(project);
@@ -133,33 +135,52 @@ export class ViewerServer {
       res.json(snapshot);
     });
 
-    api.get("/specs/:id", this.guarded(async (req, res, session) => {
-      res.json(await session.getSpec(req.params.id));
-    }));
+    api.get(
+      "/specs/:id",
+      this.guarded(async (req, res, session) => {
+        res.json(await session.getSpec(req.params.id));
+      }),
+    );
 
-    api.get("/changes/:id/deltas", this.guarded(async (req, res, session) => {
-      res.json(await session.getDeltas(req.params.id));
-    }));
+    api.get(
+      "/changes/:id/deltas",
+      this.guarded(async (req, res, session) => {
+        res.json(await session.getDeltas(req.params.id));
+      }),
+    );
 
-    api.get("/changes/:id/status", this.guarded(async (req, res, session) => {
-      res.json(await session.getStatus(req.params.id));
-    }));
+    api.get(
+      "/changes/:id/status",
+      this.guarded(async (req, res, session) => {
+        res.json(await session.getStatus(req.params.id));
+      }),
+    );
 
-    api.get("/archive/:id", this.guarded(async (req, res, session) => {
-      res.json(await session.getArchivedChange(req.params.id));
-    }));
+    api.get(
+      "/archive/:id",
+      this.guarded(async (req, res, session) => {
+        res.json(await session.getArchivedChange(req.params.id));
+      }),
+    );
 
-    api.get("/document", this.guarded(async (req, res, session) => {
-      const rel = typeof req.query.path === "string" ? req.query.path : "";
-      res.json(await session.getRawDocument(rel));
-    }));
+    api.get(
+      "/document",
+      this.guarded(async (req, res, session) => {
+        const rel = typeof req.query.path === "string" ? req.query.path : "";
+        res.json(await session.getRawDocument(rel));
+      }),
+    );
 
     this.app.use("/api", api);
   }
 
   /** Wrap a handler that requires an open session, with error translation. */
   private guarded(
-    handler: (req: Request, res: Response, session: ViewerSession) => Promise<void>,
+    handler: (
+      req: Request,
+      res: Response,
+      session: ViewerSession,
+    ) => Promise<void>,
   ) {
     return async (req: Request, res: Response) => {
       if (!this.session) {

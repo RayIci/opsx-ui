@@ -29,7 +29,8 @@ export function useAsync<T>(
         if (active) setState({ data, error: null, loading: false });
       })
       .catch((error: Error) => {
-        if (active) setState({ data: null, error: error.message, loading: false });
+        if (active)
+          setState({ data: null, error: error.message, loading: false });
       });
     return () => {
       active = false;

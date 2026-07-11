@@ -41,14 +41,21 @@ export const api = {
 
   refresh: () => fetch("/api/refresh", { method: "POST" }).then(json<Snapshot>),
 
-  spec: (id: string) => fetch(`/api/specs/${encodeURIComponent(id)}`).then(json<SpecView>),
+  spec: (id: string) =>
+    fetch(`/api/specs/${encodeURIComponent(id)}`).then(json<SpecView>),
 
   deltas: (changeId: string) =>
-    fetch(`/api/changes/${encodeURIComponent(changeId)}/deltas`).then(json<DeltaView>),
+    fetch(`/api/changes/${encodeURIComponent(changeId)}/deltas`).then(
+      json<DeltaView>,
+    ),
 
   status: (changeId: string) =>
-    fetch(`/api/changes/${encodeURIComponent(changeId)}/status`).then(json<StatusView>),
+    fetch(`/api/changes/${encodeURIComponent(changeId)}/status`).then(
+      json<StatusView>,
+    ),
 
   archived: (id: string) =>
-    fetch(`/api/archive/${encodeURIComponent(id)}`).then(json<ArchivedChangeDetail>),
+    fetch(`/api/archive/${encodeURIComponent(id)}`).then(
+      json<ArchivedChangeDetail>,
+    ),
 };

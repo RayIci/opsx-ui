@@ -21,12 +21,21 @@ const ARTIFACT_LABEL: Record<string, string> = {
  * rendered as markdown. No editing or re-running is offered (archive-browser).
  */
 export function ArchivedChange({ id, revision }: Props) {
-  const { data, error, loading } = useAsync(() => api.archived(id), [id, revision]);
+  const { data, error, loading } = useAsync(
+    () => api.archived(id),
+    [id, revision],
+  );
 
   if (loading && !data)
-    return <div className="text-muted-foreground flex justify-center py-16"><Loader2 className="size-5 animate-spin" /></div>;
+    return (
+      <div className="text-muted-foreground flex justify-center py-16">
+        <Loader2 className="size-5 animate-spin" />
+      </div>
+    );
   if (error)
-    return <div className="text-op-removed py-16 text-center text-sm">{error}</div>;
+    return (
+      <div className="text-op-removed py-16 text-center text-sm">{error}</div>
+    );
   if (!data) return null;
 
   return (
@@ -39,12 +48,16 @@ export function ArchivedChange({ id, revision }: Props) {
           </Badge>
         </div>
         <p className="text-muted-foreground text-xs">
-          {data.archivedDate ?? "—"} · {data.tasks.completed}/{data.tasks.total} tasks
+          {data.archivedDate ?? "—"} · {data.tasks.completed}/{data.tasks.total}{" "}
+          tasks
         </p>
       </header>
 
       {data.artifacts.map((artifact) => (
-        <Section key={artifact.id} title={ARTIFACT_LABEL[artifact.id] ?? artifact.id}>
+        <Section
+          key={artifact.id}
+          title={ARTIFACT_LABEL[artifact.id] ?? artifact.id}
+        >
           <Markdown>{artifact.content}</Markdown>
         </Section>
       ))}
@@ -54,7 +67,9 @@ export function ArchivedChange({ id, revision }: Props) {
           <div className="flex flex-col gap-6">
             {data.deltas.map((delta) => (
               <div key={delta.spec}>
-                <p className="text-muted-foreground mb-1 font-mono text-xs">{delta.spec}</p>
+                <p className="text-muted-foreground mb-1 font-mono text-xs">
+                  {delta.spec}
+                </p>
                 <Markdown>{delta.content}</Markdown>
               </div>
             ))}
@@ -76,7 +91,7 @@ function Section({
 }) {
   return (
     <section className={cn("flex flex-col gap-2", className)}>
-      <h2 className="text-muted-foreground border-border border-b pb-1 text-xs font-semibold uppercase tracking-wide">
+      <h2 className="text-muted-foreground border-border border-b pb-1 text-xs font-semibold tracking-wide uppercase">
         {title}
       </h2>
       {children}

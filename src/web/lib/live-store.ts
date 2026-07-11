@@ -1,9 +1,5 @@
 import { useSyncExternalStore } from "react";
-import type {
-  ActivityEntry,
-  ServerMessage,
-  Snapshot,
-} from "@shared/contracts";
+import type { ActivityEntry, ServerMessage, Snapshot } from "@shared/contracts";
 
 export type ConnectionStatus = "connecting" | "open" | "closed";
 
@@ -78,7 +74,10 @@ class LiveStore {
         break;
       case "activity":
         this.patch({
-          activity: [message.payload, ...this.state.activity].slice(0, MAX_ACTIVITY),
+          activity: [message.payload, ...this.state.activity].slice(
+            0,
+            MAX_ACTIVITY,
+          ),
           pulse: this.state.pulse + 1,
         });
         break;

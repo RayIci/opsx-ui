@@ -9,7 +9,12 @@ interface Props {
   onOpenSpec: (id: string) => void;
 }
 
-export function ChangeBoard({ changes, specs, onOpenChange, onOpenSpec }: Props) {
+export function ChangeBoard({
+  changes,
+  specs,
+  onOpenChange,
+  onOpenSpec,
+}: Props) {
   return (
     <div className="flex flex-col gap-8">
       <section>
@@ -28,7 +33,11 @@ export function ChangeBoard({ changes, specs, onOpenChange, onOpenSpec }: Props)
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {changes.map((change) => (
-              <ChangeCard key={change.name} change={change} onOpen={onOpenChange} />
+              <ChangeCard
+                key={change.name}
+                change={change}
+                onOpen={onOpenChange}
+              />
             ))}
           </div>
         )}

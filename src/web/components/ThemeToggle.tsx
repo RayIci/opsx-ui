@@ -11,7 +11,11 @@ const OPTIONS: { value: Theme; Icon: typeof Sun; label: string }[] = [
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   return (
-    <div className="bg-secondary inline-flex items-center gap-0.5 rounded-lg p-0.5" role="group" aria-label="Theme">
+    <div
+      className="bg-secondary inline-flex items-center gap-0.5 rounded-lg p-0.5"
+      role="group"
+      aria-label="Theme"
+    >
       {OPTIONS.map(({ value, Icon, label }) => (
         <button
           key={value}

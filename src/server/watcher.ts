@@ -78,14 +78,18 @@ export class OpenSpecWatcher {
   }
 
   /** Translate a changed path into a human-legible feed entry. */
-  private deriveActivity(absPath: string, kind: ActivityKind): ActivityEntry | null {
+  private deriveActivity(
+    absPath: string,
+    kind: ActivityKind,
+  ): ActivityEntry | null {
     const rel = path.relative(this.openspecDir, absPath).split(path.sep);
     const base: Omit<ActivityEntry, "targetType" | "targetId" | "detail"> = {
       id: randomUUID(),
       timestamp: new Date().toISOString(),
       kind,
     };
-    const verb = kind === "created" ? "added" : kind === "removed" ? "removed" : "updated";
+    const verb =
+      kind === "created" ? "added" : kind === "removed" ? "removed" : "updated";
 
     if (rel[0] === "changes" && rel[1] === "archive" && rel[2]) {
       return {
@@ -100,7 +104,12 @@ export class OpenSpecWatcher {
       const change = rel[1];
       const artifact = rel[rel.length - 1];
       if (rel.length <= 2 || artifact === "README.md") {
-        return { ...base, targetType: "change", targetId: change, detail: `Change ${verb}` };
+        return {
+          ...base,
+          targetType: "change",
+          targetId: change,
+          detail: `Change ${verb}`,
+        };
       }
       if (rel[2] === "specs") {
         return {
@@ -119,7 +128,12 @@ export class OpenSpecWatcher {
     }
 
     if (rel[0] === "specs" && rel[1]) {
-      return { ...base, targetType: "spec", targetId: rel[1], detail: `Spec ${verb}` };
+      return {
+        ...base,
+        targetType: "spec",
+        targetId: rel[1],
+        detail: `Spec ${verb}`,
+      };
     }
 
     return null;

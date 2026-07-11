@@ -55,7 +55,11 @@ export default function App() {
   const isLive = live.connection === "open";
   const archivedCount = snapshot?.archived.length ?? 0;
   const backTarget: View | null =
-    view.kind === "archived" ? { kind: "archive" } : view.kind === "board" ? null : { kind: "board" };
+    view.kind === "archived"
+      ? { kind: "archive" }
+      : view.kind === "board"
+        ? null
+        : { kind: "board" };
 
   return (
     <div className="min-h-dvh">
@@ -80,15 +84,21 @@ export default function App() {
               onOpenSpec={(specId) => setView({ kind: "spec", specId })}
             />
           )}
-          {view.kind === "change" && <SpecDiff changeId={view.changeId} revision={live.pulse} />}
-          {view.kind === "spec" && <SpecDetail specId={view.specId} revision={live.pulse} />}
+          {view.kind === "change" && (
+            <SpecDiff changeId={view.changeId} revision={live.pulse} />
+          )}
+          {view.kind === "spec" && (
+            <SpecDetail specId={view.specId} revision={live.pulse} />
+          )}
           {view.kind === "archive" && snapshot && (
             <ArchiveList
               archived={snapshot.archived}
               onOpen={(id) => setView({ kind: "archived", id })}
             />
           )}
-          {view.kind === "archived" && <ArchivedChange id={view.id} revision={live.pulse} />}
+          {view.kind === "archived" && (
+            <ArchivedChange id={view.id} revision={live.pulse} />
+          )}
           {view.kind === "board" && !snapshot && (
             <div className="text-muted-foreground flex justify-center py-24">
               <Loader2 className="size-5 animate-spin" />
@@ -131,27 +141,48 @@ function Header({
             <ArrowLeft /> Back
           </Button>
         ) : (
-          <span className="font-display text-base font-semibold tracking-tight">opsx-ui</span>
+          <span className="font-display text-base font-semibold tracking-tight">
+            opsx-ui
+          </span>
         )}
         <div className="ml-1 flex items-baseline gap-2">
           <span className="font-mono text-sm">{projectName}</span>
-          {version && <span className="text-muted-foreground text-xs">openspec {version}</span>}
+          {version && (
+            <span className="text-muted-foreground text-xs">
+              openspec {version}
+            </span>
+          )}
         </div>
         <div className="ml-auto flex items-center gap-3">
-          <Button variant="ghost" size="sm" onClick={onArchive} className="gap-1.5">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onArchive}
+            className="gap-1.5"
+          >
             <Archive className="size-4" /> Archive
             {archivedCount > 0 && (
-              <span className="text-muted-foreground tabular-nums">{archivedCount}</span>
+              <span className="text-muted-foreground tabular-nums">
+                {archivedCount}
+              </span>
             )}
           </Button>
           <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
             <span
-              className={cn("size-2 rounded-full", live ? "bg-op-added" : "bg-op-modified animate-pulse")}
+              className={cn(
+                "size-2 rounded-full",
+                live ? "bg-op-added" : "bg-op-modified animate-pulse",
+              )}
             />
             {live ? "live" : "reconnecting"}
           </span>
           <ThemeToggle />
-          <Button variant="ghost" size="icon" onClick={onRefresh} title="Refresh">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onRefresh}
+            title="Refresh"
+          >
             <RefreshCw />
           </Button>
         </div>

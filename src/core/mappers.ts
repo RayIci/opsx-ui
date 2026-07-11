@@ -59,8 +59,7 @@ export function mapChangeList(raw: unknown): ChangeSummary[] {
       status: asString(c.status, "in-progress"),
       tasks: { completed, total },
       validation: "unknown",
-      lastModified:
-        typeof c.lastModified === "string" ? c.lastModified : null,
+      lastModified: typeof c.lastModified === "string" ? c.lastModified : null,
     };
   });
 }
@@ -160,7 +159,9 @@ export function mapValidation(raw: unknown): ValidationView[] {
 }
 
 /** Fold a validation result into the board status a card renders. */
-export function toValidationStatus(view: ValidationView | undefined): ValidationStatus {
+export function toValidationStatus(
+  view: ValidationView | undefined,
+): ValidationStatus {
   if (!view) return "unknown";
   return view.valid ? "valid" : "invalid";
 }

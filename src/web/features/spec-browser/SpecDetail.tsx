@@ -9,10 +9,23 @@ interface Props {
 }
 
 export function SpecDetail({ specId, revision }: Props) {
-  const { data, error, loading } = useAsync(() => api.spec(specId), [specId, revision]);
+  const { data, error, loading } = useAsync(
+    () => api.spec(specId),
+    [specId, revision],
+  );
 
-  if (loading && !data) return <Centered><Loader2 className="size-5 animate-spin" /></Centered>;
-  if (error) return <Centered><span className="text-op-removed text-sm">{error}</span></Centered>;
+  if (loading && !data)
+    return (
+      <Centered>
+        <Loader2 className="size-5 animate-spin" />
+      </Centered>
+    );
+  if (error)
+    return (
+      <Centered>
+        <span className="text-op-removed text-sm">{error}</span>
+      </Centered>
+    );
   if (!data) return null;
 
   return (
@@ -23,7 +36,8 @@ export function SpecDetail({ specId, revision }: Props) {
           <p className="text-muted-foreground mt-1 text-sm">{data.overview}</p>
         )}
         <p className="text-muted-foreground mt-2 text-xs tabular-nums">
-          {data.requirements.length} requirement{data.requirements.length === 1 ? "" : "s"}
+          {data.requirements.length} requirement
+          {data.requirements.length === 1 ? "" : "s"}
         </p>
       </header>
       <div className="flex flex-col gap-3">
@@ -36,5 +50,9 @@ export function SpecDetail({ specId, revision }: Props) {
 }
 
 function Centered({ children }: { children: React.ReactNode }) {
-  return <div className="text-muted-foreground flex justify-center py-16">{children}</div>;
+  return (
+    <div className="text-muted-foreground flex justify-center py-16">
+      {children}
+    </div>
+  );
 }

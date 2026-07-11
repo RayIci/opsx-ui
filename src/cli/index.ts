@@ -19,7 +19,9 @@ async function main(): Promise<void> {
   const program = new Command();
   program
     .name("opsx-ui")
-    .description("A read-only, live web viewer for everything OpenSpec touches.")
+    .description(
+      "A read-only, live web viewer for everything OpenSpec touches.",
+    )
     .argument("[dir]", "project directory to open (defaults to current)")
     .option("-g, --global", "skip current directory; open the project picker")
     .option("-p, --port <port>", "preferred port", String(DEFAULT_PORT))
@@ -80,7 +82,9 @@ function printBanner(
   } else if (global) {
     console.log(`  global mode: choose a project in the browser`);
   } else {
-    console.log(`  no openspec/ in ${cwd} — initialize or pick one in the browser`);
+    console.log(
+      `  no openspec/ in ${cwd} — initialize or pick one in the browser`,
+    );
   }
   console.log("");
 }
