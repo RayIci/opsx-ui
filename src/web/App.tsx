@@ -11,7 +11,13 @@ import { ProjectGate } from "@/features/project-gate/ProjectGate";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, RefreshCw, Loader2, Archive } from "lucide-react";
+import {
+  ArrowLeft,
+  RefreshCw,
+  Loader2,
+  Archive,
+  CircleAlert,
+} from "lucide-react";
 
 type View =
   | { kind: "board" }
@@ -20,18 +26,31 @@ type View =
   | { kind: "archive" }
   | { kind: "archived"; id: string };
 
+type LoadState =
+  | { status: "loading" }
+  | { status: "error"; message: string }
+  | { status: "ready"; bootstrap: Bootstrap };
+
 export default function App() {
-  const [bootstrap, setBootstrap] = useState<Bootstrap | null>(null);
+  const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
   const [view, setView] = useState<View>({ kind: "board" });
   const live = useLiveState();
 
   const load = useCallback(async () => {
-    const data = await api.bootstrap();
-    setBootstrap(data);
-    if (data.project) {
-      const snapshot = await api.refresh().catch(() => null);
-      liveStore.seed(snapshot);
-      liveStore.connect();
+    setLoadState({ status: "loading" });
+    try {
+      const data = await api.bootstrap();
+      if (data.project) {
+        const snapshot = await api.refresh().catch(() => null);
+        liveStore.seed(snapshot);
+        liveStore.connect();
+      }
+      setLoadState({ status: "ready", bootstrap: data });
+    } catch (error) {
+      setLoadState({
+        status: "error",
+        message: error instanceof Error ? error.message : String(error),
+      });
     }
   }, []);
 
@@ -39,13 +58,21 @@ export default function App() {
     void load();
   }, [load]);
 
-  if (!bootstrap) {
+  if (loadState.status === "loading") {
     return (
       <div className="text-muted-foreground flex min-h-dvh items-center justify-center">
         <Loader2 className="size-5 animate-spin" />
       </div>
     );
   }
+
+  if (loadState.status === "error") {
+    return (
+      <LoadError message={loadState.message} onRetry={() => void load()} />
+    );
+  }
+
+  const bootstrap = loadState.bootstrap;
 
   if (!bootstrap.project) {
     return <ProjectGate bootstrap={bootstrap} onOpened={() => void load()} />;
@@ -80,8 +107,10 @@ export default function App() {
             <ChangeBoard
               changes={snapshot.changes}
               specs={snapshot.specs}
+              archived={snapshot.archived}
               onOpenChange={(changeId) => setView({ kind: "change", changeId })}
               onOpenSpec={(specId) => setView({ kind: "spec", specId })}
+              onOpenArchived={(id) => setView({ kind: "archived", id })}
             />
           )}
           {view.kind === "change" && (
@@ -109,6 +138,41 @@ export default function App() {
         <div className="lg:sticky lg:top-20 lg:h-[calc(100dvh-6rem)]">
           <ActivityFeed entries={live.activity} live={isLive} />
         </div>
+      </div>
+    </div>
+  );
+}
+
+function LoadError({
+  message,
+  onRetry,
+}: {
+  message: string;
+  onRetry: () => void;
+}) {
+  return (
+    <div className="flex min-h-dvh items-center justify-center px-6">
+      <div className="border-border flex max-w-md flex-col items-center gap-3 rounded-xl border p-8 text-center">
+        <CircleAlert className="text-op-removed size-6" />
+        <h1 className="font-display text-lg font-semibold">
+          Couldn&apos;t reach the opsx-ui server
+        </h1>
+        <p className="text-muted-foreground text-sm">
+          The viewer server isn&apos;t responding. In dev, make sure both
+          processes are running — start them together with{" "}
+          <code className="font-mono text-xs">npm run dev</code>.
+        </p>
+        <p className="text-muted-foreground/80 font-mono text-xs break-all">
+          {message}
+        </p>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={onRetry}
+          className="mt-1"
+        >
+          <RefreshCw /> Retry
+        </Button>
       </div>
     </div>
   );
