@@ -1,9 +1,4 @@
-# spec-browser Specification
-
-## Purpose
-The drill-down view for browsing the project's current specifications — capabilities, their requirements, and scenarios — reachable directly or by navigating from a change to the specs it affects.
-
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Browse specifications
 The system SHALL present specifications as a dedicated page with a persistent sidebar listing the project's capabilities and a main pane that displays the selected capability, so users can move between capabilities without leaving the page.
@@ -20,20 +15,6 @@ The system SHALL present specifications as a dedicated page with a persistent si
 #### Scenario: Opening the Specs page with no capability selected
 - **WHEN** a user opens the Specs page without a specific capability chosen
 - **THEN** the sidebar is shown and the main pane prompts the user to select a capability
-
-### Requirement: Drill-down navigation
-The system SHALL allow navigation from a change into the specs it affects.
-
-#### Scenario: Navigating from a change to its spec
-- **WHEN** a user opens a change that affects a capability
-- **THEN** the user can navigate to that capability's current spec
-
-### Requirement: Spec view reflects live state
-The system SHALL update the displayed specification automatically when its underlying file changes.
-
-#### Scenario: A spec changes while being viewed
-- **WHEN** a specification file changes while it is displayed
-- **THEN** the displayed content updates without a manual refresh
 
 ### Requirement: Markdown rendering of spec content
 The system SHALL render a selected capability as its full specification document in formatted markdown — headings, requirements, and scenarios as authored on disk — rather than as reconstructed requirement cards or monospaced boxes.

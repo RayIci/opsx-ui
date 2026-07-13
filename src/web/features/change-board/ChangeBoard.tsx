@@ -1,29 +1,21 @@
-import type {
-  ArchivedChangeSummary,
-  ChangeSummary,
-  SpecSummary,
-} from "@shared/contracts";
+import type { ArchivedChangeSummary, ChangeSummary } from "@shared/contracts";
 import { ChangeCard } from "./ChangeCard";
 import { deriveColumns } from "./columns";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Layers, Archive as ArchiveIcon } from "lucide-react";
+import { Archive as ArchiveIcon } from "lucide-react";
 
 interface Props {
   changes: ChangeSummary[];
-  specs: SpecSummary[];
   archived: ArchivedChangeSummary[];
   onOpenChange: (name: string) => void;
-  onOpenSpec: (id: string) => void;
   onOpenArchived: (id: string) => void;
 }
 
 export function ChangeBoard({
   changes,
-  specs,
   archived,
   onOpenChange,
-  onOpenSpec,
   onOpenArchived,
 }: Props) {
   const columns = deriveColumns({ changes, archived });
@@ -98,37 +90,6 @@ export function ChangeBoard({
             ))}
           </KanbanColumn>
         </div>
-      </section>
-
-      <section>
-        <div className="mb-3 flex items-baseline justify-between">
-          <h2 className="text-lg font-semibold">Specifications</h2>
-          <span className="text-muted-foreground text-sm tabular-nums">
-            {specs.length}
-          </span>
-        </div>
-        {specs.length === 0 ? (
-          <EmptyState
-            icon={<Layers className="size-5" />}
-            title="No specifications yet"
-            hint="Specs are the living truth. They'll show once a change is archived."
-          />
-        ) : (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            {specs.map((spec) => (
-              <button
-                key={spec.id}
-                onClick={() => onOpenSpec(spec.id)}
-                className="group border-border hover:border-ring/60 hover:bg-accent/40 flex items-center justify-between rounded-lg border px-4 py-3 text-left transition-colors"
-              >
-                <span className="font-mono text-sm">{spec.title}</span>
-                <span className="text-muted-foreground text-xs tabular-nums">
-                  {spec.requirementCount} req
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
       </section>
     </div>
   );
@@ -205,23 +166,5 @@ function ArchivedMiniCard({
         <Progress value={change.tasks.completed} max={change.tasks.total} />
       </CardContent>
     </Card>
-  );
-}
-
-function EmptyState({
-  icon,
-  title,
-  hint,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  hint: string;
-}) {
-  return (
-    <div className="border-border text-muted-foreground flex flex-col items-center gap-2 rounded-xl border border-dashed py-12 text-center">
-      {icon}
-      <p className="text-foreground text-sm font-medium">{title}</p>
-      <p className="max-w-xs text-xs">{hint}</p>
-    </div>
   );
 }

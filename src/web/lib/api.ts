@@ -2,6 +2,7 @@ import type {
   ArchivedChangeDetail,
   DeltaView,
   ProjectView,
+  RawDocument,
   Snapshot,
   SpecView,
   StatusView,
@@ -43,6 +44,11 @@ export const api = {
 
   spec: (id: string) =>
     fetch(`/api/specs/${encodeURIComponent(id)}`).then(json<SpecView>),
+
+  document: (path: string) =>
+    fetch(`/api/document?path=${encodeURIComponent(path)}`).then(
+      json<RawDocument>,
+    ),
 
   deltas: (changeId: string) =>
     fetch(`/api/changes/${encodeURIComponent(changeId)}/deltas`).then(

@@ -39,6 +39,13 @@ export class ViewerServer {
     this.http = createServer(this.app);
     this.wss = new WebSocketServer({ server: this.http, path: "/ws" });
     this.wss.on("connection", (socket) => this.onClient(socket));
+    // A WSS bound to `server` re-emits the HTTP server's listen errors. `listen()`
+    // already handles EADDRINUSE by retrying the next port, so swallow it here to
+    // avoid an unhandled 'error' event crashing the process; surface anything else.
+    this.wss.on("error", (err: NodeJS.ErrnoException) => {
+      if (err.code !== "EADDRINUSE")
+        console.error("[opsx-ui] websocket server error:", err);
+    });
   }
 
   async start(port: number): Promise<number> {
