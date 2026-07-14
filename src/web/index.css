@@ -378,6 +378,24 @@
     gap: 0.5em;
   }
 
+  /* A rendered diagram. The container reserves space while mermaid draws, so
+   * the document does not reflow as diagrams appear. */
+  .md-prose .md-mermaid {
+    margin: 0.75em 0;
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+  }
+  .md-prose .md-mermaid[data-drawing] {
+    min-height: 6rem;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+  }
+  .md-prose .md-mermaid svg {
+    max-width: 100%;
+    height: auto;
+  }
+
   /* Code block + its copy overlay. The wrapper carries the margin so the
    * overlay positions against the block, not the prose flow. */
   .md-prose .md-code {

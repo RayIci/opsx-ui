@@ -54,3 +54,31 @@ export function useTheme() {
 
   return { theme, setTheme };
 }
+
+/**
+ * Whether the dark theme is currently applied, observed from the `dark` class
+ * on the document element — the app's actual source of truth.
+ *
+ * `useTheme` reports the *preference*, which may be "system" and so cannot tell
+ * a caller which theme is actually showing. Anything that must be redrawn per
+ * theme (a diagram is drawn output, not styled DOM) needs the resolved value,
+ * and needs it to change when the OS flips under "system" too.
+ */
+export function useIsDarkTheme(): boolean {
+  const [dark, setDark] = useState(() =>
+    typeof document === "undefined"
+      ? false
+      : document.documentElement.classList.contains("dark"),
+  );
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const observer = new MutationObserver(() =>
+      setDark(root.classList.contains("dark")),
+    );
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
+  return dark;
+}

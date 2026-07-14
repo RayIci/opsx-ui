@@ -27,6 +27,8 @@ Constraints: mermaid is large (hundreds of kB, dwarfing the highlighter), it ren
 ### Dynamic import, keyed on the document actually containing a diagram
 Mermaid is imported only after the pipeline observes a `mermaid` fence in the document being rendered. It is absent from the initial bundle entirely. This is the difference between "the viewer got heavier" and "documents with diagrams cost more" — and since today's corpus has zero diagrams, the current cost of this change to real users is approximately zero, which is exactly the point.
 
+**The import must be memoized into one shared promise**, not fired per diagram. Found by testing: a document with two diagrams issues two concurrent `import("mermaid")` calls, and they do not reliably both settle — one diagram drew and the second sat at "drawing" forever, with no error to explain it. A single module-scoped promise every diagram awaits fixes it and is the more honest expression of "load it once" anyway.
+
 *Alternative considered:* static import — rejected; it would put hundreds of kB into the initial bundle to serve zero present content. *Alternative considered:* preload on idle — rejected as unnecessary speculation for a localhost tool.
 
 ### Theme via mermaid's theme configuration, re-initialized on theme change
@@ -35,8 +37,10 @@ Mermaid is configured with a light or dark theme derived from the app's active t
 ### Invalid syntax degrades to source, and the failure is contained
 Rendering is wrapped so a mermaid parse/render failure yields the fence's source text plus an indication it could not be drawn. Mermaid throws on malformed input, and document content arrives from an arbitrary project that may be mid-edit — an agent could be writing the file as it is being watched and re-rendered. An uncaught throw inside the render path would take out the whole document, turning a typo in one diagram into a blank page. Degrading to source keeps the document readable and shows the author their own text.
 
-### SVG is inserted as a rendered node, not by re-opening raw HTML
-Mermaid produces SVG markup, and the obvious shortcut — `dangerouslySetInnerHTML` or enabling `rehype-raw` — would reopen the exact injection path `markdown-rendering` deliberately closed. Instead the diagram is rendered by a dedicated component that owns its own container and mounts mermaid's output there, so untrusted markdown still cannot inject markup through the pipeline. Mermaid runs with its own security level configured to sanitize, not trusting the diagram source either.
+### SVG is mounted in the diagram component's own container, and `rehype-raw` stays off
+Mermaid's `render()` hands back an SVG **string**, so getting it on screen means innerHTML one way or another — this design originally claimed otherwise, and implementing it corrected the claim. Parsing that same string via `DOMParser` and appending the nodes would be identical in trust and merely more code: the safety comes from *what* is inserted, not *how*.
+
+So the real boundary is drawn where it matters. The diagram component sets its own container's HTML from **mermaid's own generated, sanitized output**, with mermaid's `securityLevel: 'strict'` so the diagram source is not trusted either. What is emphatically *not* done is enabling `rehype-raw`: the markdown pipeline still refuses raw HTML, so arbitrary project markdown cannot inject markup anywhere. The distinction is between rendering one library's sanitized SVG inside one component, and letting every document render whatever HTML it likes.
 
 ### Untagged fences are explicitly out of scope, and stated as a requirement
 The ASCII diagrams that justify this change must not be "helpfully" reinterpreted. The language-decides-treatment rule already gives this for free, but it is restated as a requirement because it is the one regression that would be most ironic and most likely: a diagram feature that mangles the diagrams people already drew.
