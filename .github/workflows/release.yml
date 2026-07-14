@@ -2,8 +2,8 @@ name: Release
 
 # Publishes to npm when a version tag (vX.Y.Z) is pushed. Re-runs the full
 # checks gate first, verifies the tag matches package.json and that the tagged
-# commit is on main, then publishes with provenance. NPM_TOKEN is reachable
-# only here, never in the PR pipeline.
+# commit is on main, then publishes with provenance via npm trusted publishing
+# (OIDC) — no token required.
 on:
   push:
     tags:
@@ -19,12 +19,11 @@ jobs:
   publish:
     needs: checks
     runs-on: ubuntu-latest
-    # Optional: a protected environment lets you require a human reviewer before
-    # the token is used. Configure reviewers in Settings → Environments.
+    # Must match the Environment configured on the npm trusted publisher.
     environment: npm-publish
     permissions:
       contents: read
-      id-token: write # required for npm publish --provenance
+      id-token: write # required for trusted publishing + provenance
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,6 +34,9 @@ jobs:
           node-version: "22"
           cache: npm
           registry-url: https://registry.npmjs.org
+
+      # Node 22 ships npm 10.x; trusted publishing needs npm >= 11.5.1.
+      - run: npm install -g npm@latest
 
       - name: Verify tag matches package version
         run: |
@@ -61,5 +63,3 @@ jobs:
       # prepublishOnly rebuilds dist/ before the package is assembled.
       - name: Publish to npm
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
