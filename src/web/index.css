@@ -267,6 +267,20 @@
     white-space: nowrap;
   }
 
+  /* A reference to a known artifact: subtle, so ~8 per document read as prose
+   * with affordance rather than a wall of links. */
+  .md-prose a.os-artifact-link {
+    text-decoration: none;
+    border-bottom: 1px dashed var(--color-border);
+  }
+  .md-prose a.os-artifact-link:hover {
+    border-bottom-color: var(--color-primary);
+  }
+  .md-prose a.os-artifact-link code {
+    color: var(--color-primary);
+    cursor: pointer;
+  }
+
   /* --- Document navigation ---------------------------------------------- */
 
   /* Headings own their anchor control; scroll-margin keeps a deep-linked
