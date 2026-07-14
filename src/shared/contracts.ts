@@ -7,6 +7,34 @@
 export type ChangeStatus = "in-progress" | "complete" | string;
 export type ValidationStatus = "valid" | "invalid" | "unknown";
 export type DeltaOperation = "ADDED" | "MODIFIED" | "REMOVED" | "RENAMED";
+
+/** The file-backed document artifacts OpenSpec writes for a change, in reading
+ *  order. Single source of truth for the archive reader and the manifest. */
+export const DOCUMENT_ARTIFACT_IDS = ["proposal", "design", "tasks"] as const;
+export type DocumentArtifactId = (typeof DOCUMENT_ARTIFACT_IDS)[number];
+
+/** Every destination in the change artifact navigation, in tab order: the three
+ *  document artifacts plus the delta-backed spec changes. */
+export const ARTIFACT_IDS = [...DOCUMENT_ARTIFACT_IDS, "spec-changes"] as const;
+export type ArtifactId = (typeof ARTIFACT_IDS)[number];
+
+/** Which of a change's artifacts exist on disk — lets the drill-in show every
+ *  destination while disabling the ones a change doesn't (yet) have. */
+export interface ChangeArtifactManifest {
+  changeName: string;
+  proposal: boolean;
+  design: boolean;
+  tasks: boolean;
+  deltaCount: number;
+}
+
+/** Durable per-user viewer preferences, persisted to an OS config file.
+ *  `version` is a forward-migration seam; `null` means "use the built-in
+ *  default" (Proposal) rather than a pinned tab. */
+export interface Settings {
+  version: 1;
+  defaultArtifactTab: ArtifactId | null;
+}
 export type ArtifactStatus = "ready" | "blocked" | "done" | "pending" | string;
 export type ActivityKind = "created" | "modified" | "removed";
 export type ProjectSource = "cwd" | "store" | "picked";

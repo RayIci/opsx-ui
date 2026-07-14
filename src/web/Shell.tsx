@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { api, type Bootstrap } from "@/lib/api";
 import { liveStore, useLiveState } from "@/lib/live-store";
+import { settingsStore } from "@/lib/settings-store";
 import { useActivityDrawer } from "@/lib/activity-drawer";
 import { ActivityDrawer } from "@/features/activity-feed/ActivityDrawer";
 import { ProjectGate } from "@/features/project-gate/ProjectGate";
@@ -13,6 +14,7 @@ import {
   Loader2,
   Archive,
   Activity,
+  Settings,
   CircleAlert,
 } from "lucide-react";
 
@@ -34,6 +36,7 @@ export function Shell() {
   const load = useCallback(async () => {
     setLoadState({ status: "loading" });
     try {
+      settingsStore.start();
       const data = await api.bootstrap();
       if (data.project) {
         const snapshot = await api.refresh().catch(() => null);
@@ -184,6 +187,20 @@ function Header({
             <Activity />
           </Button>
           <ThemeToggle />
+          <NavLink
+            to="/settings"
+            title="Settings"
+            className={({ isActive }) =>
+              cn(
+                "inline-flex size-9 items-center justify-center rounded-md transition-colors",
+                isActive
+                  ? "bg-accent text-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground",
+              )
+            }
+          >
+            <Settings className="size-4" />
+          </NavLink>
           <Button
             variant="ghost"
             size="icon"

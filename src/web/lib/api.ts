@@ -1,8 +1,10 @@
 import type {
   ArchivedChangeDetail,
+  ChangeArtifactManifest,
   DeltaView,
   ProjectView,
   RawDocument,
+  Settings,
   Snapshot,
   SpecView,
   StatusView,
@@ -60,8 +62,23 @@ export const api = {
       json<StatusView>,
     ),
 
+  artifacts: (changeId: string) =>
+    fetch(`/api/changes/${encodeURIComponent(changeId)}/artifacts`).then(
+      json<ChangeArtifactManifest>,
+    ),
+
   archived: (id: string) =>
     fetch(`/api/archive/${encodeURIComponent(id)}`).then(
       json<ArchivedChangeDetail>,
     ),
+
+  settings: {
+    get: () => fetch("/api/settings").then(json<Settings>),
+    put: (patch: Partial<Settings>) =>
+      fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      }).then(json<Settings>),
+  },
 };

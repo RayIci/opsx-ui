@@ -10,6 +10,7 @@ import { OpenSpecWatcher } from "./watcher.js";
 import type {
   ActivityEntry,
   ArchivedChangeDetail,
+  ChangeArtifactManifest,
   DeltaView,
   ProjectView,
   RawDocument,
@@ -97,6 +98,10 @@ export class ViewerSession {
 
   getArchivedChange(id: string): Promise<ArchivedChangeDetail> {
     return this.archive.getArchivedChange(id);
+  }
+
+  getChangeArtifactManifest(name: string): Promise<ChangeArtifactManifest> {
+    return this.archive.getChangeArtifactManifest(name);
   }
 
   getRawDocument(relativePath: string): Promise<RawDocument> {

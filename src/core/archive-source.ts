@@ -1,6 +1,7 @@
 import type {
   ArchivedChangeDetail,
   ArchivedChangeSummary,
+  ChangeArtifactManifest,
   RawDocument,
 } from "@shared/contracts.js";
 
@@ -17,6 +18,9 @@ export interface ArchiveSource {
 
   /** One archived change opened for reading (artifacts + deltas as markdown). */
   getArchivedChange(id: string): Promise<ArchivedChangeDetail>;
+
+  /** Which artifacts an active change has on disk, for the drill-in nav. */
+  getChangeArtifactManifest(name: string): Promise<ChangeArtifactManifest>;
 
   /** A raw markdown document under the project's `openspec/` tree. */
   getRawDocument(relativePath: string): Promise<RawDocument>;

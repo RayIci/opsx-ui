@@ -5,6 +5,7 @@ import { SpecsPage } from "./pages/SpecsPage";
 import { ChangePage } from "./pages/ChangePage";
 import { ArchivePage } from "./pages/ArchivePage";
 import { ArchivedPage } from "./pages/ArchivedPage";
+import { SettingsPage } from "./pages/SettingsPage";
 
 export const router = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ export const router = createBrowserRouter([
       { path: "changes/:name", element: <ChangePage /> },
       { path: "archive", element: <ArchivePage /> },
       { path: "archive/:id", element: <ArchivedPage /> },
+      { path: "settings", element: <SettingsPage /> },
     ],
   },
 ]);

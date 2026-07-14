@@ -6,12 +6,13 @@ import type {
   ArchivedChangeDetail,
   ArchivedChangeSummary,
   ArchivedDelta,
+  ChangeArtifactManifest,
   RawDocument,
   TaskProgress,
 } from "@shared/contracts.js";
+import { DOCUMENT_ARTIFACT_IDS } from "@shared/contracts.js";
 import { OpenSpecCliError } from "./errors.js";
 
-const ARTIFACT_FILES = ["proposal", "design", "tasks"] as const;
 const DATE_PREFIX = /^(\d{4}-\d{2}-\d{2})-(.+)$/;
 
 /**
@@ -21,11 +22,13 @@ const DATE_PREFIX = /^(\d{4}-\d{2}-\d{2})-(.+)$/;
  */
 export class FilesystemSource implements ArchiveSource {
   private readonly openspecDir: string;
+  private readonly changesDir: string;
   private readonly archiveDir: string;
 
   constructor(projectRoot: string) {
     this.openspecDir = path.join(projectRoot, "openspec");
-    this.archiveDir = path.join(this.openspecDir, "changes", "archive");
+    this.changesDir = path.join(this.openspecDir, "changes");
+    this.archiveDir = path.join(this.changesDir, "archive");
   }
 
   async listArchived(): Promise<ArchivedChangeSummary[]> {
@@ -64,13 +67,31 @@ export class FilesystemSource implements ArchiveSource {
     }
 
     const artifacts: ArchivedArtifact[] = [];
-    for (const artifact of ARTIFACT_FILES) {
+    for (const artifact of DOCUMENT_ARTIFACT_IDS) {
       const content = await this.readIfExists(path.join(dir, `${artifact}.md`));
       if (content !== null) artifacts.push({ id: artifact, content });
     }
 
     const deltas = await this.readArchivedDeltas(path.join(dir, "specs"));
     return { ...summary, artifacts, deltas };
+  }
+
+  async getChangeArtifactManifest(
+    name: string,
+  ): Promise<ChangeArtifactManifest> {
+    const dir = this.resolveChangeEntry(name);
+    const present: Record<string, boolean> = {};
+    for (const id of DOCUMENT_ARTIFACT_IDS) {
+      present[id] = await this.exists(path.join(dir, `${id}.md`));
+    }
+    const deltaCount = await this.countSpecDeltas(path.join(dir, "specs"));
+    return {
+      changeName: name,
+      proposal: present.proposal,
+      design: present.design,
+      tasks: present.tasks,
+      deltaCount,
+    };
   }
 
   async getRawDocument(relativePath: string): Promise<RawDocument> {
@@ -101,12 +122,40 @@ export class FilesystemSource implements ArchiveSource {
     return { completed: done, total: done + todo };
   }
 
+  /** Count capability sub-directories under a change's `specs/` that hold a
+   *  `spec.md` — i.e. how many delta specs the change proposes. */
+  private async countSpecDeltas(specsDir: string): Promise<number> {
+    const capabilities = await this.safeReaddir(specsDir);
+    let count = 0;
+    for (const cap of capabilities) {
+      if (await this.exists(path.join(specsDir, cap, "spec.md"))) count += 1;
+    }
+    return count;
+  }
+
   private async safeReaddir(dir: string): Promise<string[]> {
     return readdir(dir).catch(() => []);
   }
 
+  private async exists(file: string): Promise<boolean> {
+    return stat(file)
+      .then((info) => info.isFile())
+      .catch(() => false);
+  }
+
   private async readIfExists(file: string): Promise<string | null> {
     return readFile(file, "utf8").catch(() => null);
+  }
+
+  /** Resolve an active change directory by name, guarding against traversal. */
+  private resolveChangeEntry(name: string): string {
+    if (name.includes("/") || name.includes("\\") || name.includes("..")) {
+      throw new OpenSpecCliError(`Invalid change name: ${name}`, [
+        "change",
+        name,
+      ]);
+    }
+    return path.join(this.changesDir, name);
   }
 
   /** Resolve an archive entry id, guarding against traversal. */
