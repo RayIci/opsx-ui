@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { api } from "@/lib/api";
 import { useAsync } from "@/lib/use-async";
-import { Markdown } from "@/components/Markdown";
+import { DocumentView } from "@/components/DocumentView";
 import { Loader2 } from "lucide-react";
 
 interface Props {
@@ -48,6 +48,8 @@ export function MarkdownArtifact({
   if (blank) return <>{empty}</>;
 
   return (
-    <Markdown className={className ?? "mx-auto max-w-3xl"}>{content}</Markdown>
+    <DocumentView className={className ?? "mx-auto max-w-5xl"}>
+      {content}
+    </DocumentView>
   );
 }

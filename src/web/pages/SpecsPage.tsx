@@ -2,7 +2,7 @@ import { NavLink, useParams } from "react-router-dom";
 import { api } from "@/lib/api";
 import { useAsync } from "@/lib/use-async";
 import { useLiveState } from "@/lib/live-store";
-import { Markdown } from "@/components/Markdown";
+import { DocumentView } from "@/components/DocumentView";
 import { cn } from "@/lib/utils";
 import { CenteredLoader } from "./shared";
 import { FileText, Layers } from "lucide-react";
@@ -75,7 +75,7 @@ function SpecDocument({ capability }: { capability: string }) {
     );
   if (!data) return null;
 
-  return <Markdown className="max-w-3xl">{data.content}</Markdown>;
+  return <DocumentView>{data.content}</DocumentView>;
 }
 
 function SelectPrompt({ hasSpecs }: { hasSpecs: boolean }) {

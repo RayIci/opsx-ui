@@ -1,4 +1,5 @@
 import type { Heading, ListItem, Parent, PhrasingContent, Root } from "mdast";
+import { annotate, plainText } from "./mdast-text";
 
 /** `### Requirement: <name>` — anchored to the exact prefix, on a heading only. */
 const REQUIREMENT = /^Requirement:\s*(.+)$/;
@@ -9,27 +10,6 @@ const OPERATION = /^(ADDED|MODIFIED|REMOVED|RENAMED)\s+Requirements$/;
 /** The normative keyword, as a standalone word — so `SHALL NOT` is covered and
  *  "shall" in ordinary prose is not. */
 const SHALL = /\bSHALL\b/;
-
-type Annotations = Record<string, string>;
-
-function annotate(node: { data?: unknown }, properties: Annotations): void {
-  const data = (node.data ?? {}) as {
-    hProperties?: Record<string, unknown>;
-  };
-  data.hProperties = { ...(data.hProperties ?? {}), ...properties };
-  (node as { data?: unknown }).data = data;
-}
-
-/** The plain text of a phrasing subtree — text and inline code, joined. */
-function plainText(node: Parent | PhrasingContent): string {
-  if ("value" in node && typeof node.value === "string") return node.value;
-  if ("children" in node && Array.isArray(node.children)) {
-    return node.children
-      .map((child) => plainText(child as PhrasingContent))
-      .join("");
-  }
-  return "";
-}
 
 /** Wrap every standalone SHALL in a span, leaving the author's words intact. */
 function emphasizeShall(nodes: PhrasingContent[]): PhrasingContent[] {

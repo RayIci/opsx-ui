@@ -40,6 +40,8 @@ The browser's native fragment scroll fires before `api.document(...)` resolves, 
 
 A missing target degrades to "render from the top, no error" — a spec may have been edited since the link was made.
 
+**The arrival marker must be part of the render, not set on the DOM by hand.** This was found by testing, not by design: marking the target with `setAttribute` worked, and was then silently wiped a moment later when the outline's state settled and React reconciled the heading. The result was a deep link that scrolled correctly to an unmarked section — the scroll succeeded, so nothing looked broken. The hook therefore *reports* the resolved target and a rehype stage applies the mark declaratively, so a re-render cannot undo it. Scrolling stays imperative; only the mark needs to survive.
+
 ### Outline placement must not fight the Specs sidebar
 `SpecsPage` already spends its left column on the capability list. The outline goes on the **right** of the document (sticky, like the existing sidebar), where the change drill-in and archived change have room and the Specs page can host it without displacing its capability list. On narrow viewports the outline collapses out of the way rather than stacking two navigation columns above the content.
 

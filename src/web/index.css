@@ -267,6 +267,20 @@
     white-space: nowrap;
   }
 
+  /* --- Document navigation ---------------------------------------------- */
+
+  /* Headings own their anchor control; scroll-margin keeps a deep-linked
+   * section clear of the sticky header on arrival. */
+  .md-prose :is(h1, h2, h3, h4)[id] {
+    scroll-margin-top: 5rem;
+  }
+  /* The arrival marker: brief, so a deep-linked requirement is identifiable
+   * without permanently decorating the document. */
+  .md-prose [data-os-target] {
+    animation: pulse-once 1.4s ease-out;
+    border-radius: var(--radius-sm);
+  }
+
   /* --- OpenSpec document semantics -------------------------------------
    * Typographic distinction of authored content — never reconstructed cards
    * (spec-browser requires documents render as documents). Hierarchy:
