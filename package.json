@@ -19,6 +19,7 @@
     "build:web": "vite build",
     "build:server": "tsc -p tsconfig.node.json",
     "build": "npm run build:web && npm run build:server",
+    "prepublishOnly": "npm run build",
     "start": "node dist/cli/index.js",
     "typecheck": "tsc -p tsconfig.node.json --noEmit && tsc -p tsconfig.web.json --noEmit",
     "test": "vitest run",

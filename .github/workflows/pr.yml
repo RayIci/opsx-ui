@@ -1,0 +1,16 @@
+name: PR
+
+# Runs the checks gate on every pull request to main. Uses `pull_request`
+# (never `pull_request_target`), so fork PRs run with a read-only token and no
+# access to repository secrets — the PR gate can never read NPM_TOKEN.
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # Status check name for branch protection: "checks / verify".
+  checks:
+    uses: ./.github/workflows/checks.yml
