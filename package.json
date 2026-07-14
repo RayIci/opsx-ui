@@ -15,7 +15,7 @@
   "scripts": {
     "dev": "concurrently -k -n server,web -c blue,magenta \"npm:dev:server\" \"npm:dev:web\"",
     "dev:web": "vite --open",
-    "dev:server": "tsx watch src/cli/index.ts --no-open",
+    "dev:server": "tsx watch --tsconfig ./tsconfig.node.json src/cli/index.ts --no-open",
     "build:web": "vite build",
     "build:server": "tsc -p tsconfig.node.json",
     "build": "npm run build:web && npm run build:server",

@@ -1,7 +1,7 @@
 # change-tasks Specification
 
 ## Purpose
-Reading an active change's task list on its drill-in: the checklist from the change's `tasks.md` rendered as read-only markdown, presented as a distinct, switchable view alongside the proposed spec deltas, with graceful handling when no tasks exist.
+Reading an active change's task list on its drill-in: the checklist from the change's `tasks.md` rendered as read-only markdown, presented as one destination in the change artifact navigation, with graceful handling when no tasks exist. Switching between artifacts is owned by the `change-artifact-nav` capability.
 
 ## Requirements
 
@@ -28,21 +28,6 @@ The system SHALL present the task list for reading only and SHALL NOT provide an
 
 - **WHEN** a user views the task list on a change drill-in
 - **THEN** no task's completion state can be modified through the interface
-
-### Requirement: Tasks are a distinct, switchable view on the drill-in
-
-The system SHALL present the task list as its own view on the change drill-in, switchable with the proposed spec deltas, rather than combining both on screen at once, so each is read on an uncluttered surface.
-
-#### Scenario: Switching between tasks and spec changes
-
-- **WHEN** a user on a change drill-in switches between the tasks view and the spec-changes view
-- **THEN** the selected view is shown on its own
-- **AND** the other view remains reachable through the same switch
-
-#### Scenario: Task view is the default
-
-- **WHEN** a user opens a change drill-in
-- **THEN** the tasks view is shown first, with the spec-changes view one switch away
 
 ### Requirement: Graceful handling of absent tasks
 

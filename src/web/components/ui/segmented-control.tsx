@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils";
 interface Option<T extends string> {
   value: T;
   label: string;
+  /** A disabled option is shown greyed and cannot be selected. */
+  disabled?: boolean;
 }
 
 interface Props<T extends string> {
@@ -33,12 +35,15 @@ export function SegmentedControl<T extends string>({
             key={option.value}
             role="tab"
             aria-selected={active}
+            disabled={option.disabled}
             onClick={() => onChange(option.value)}
             className={cn(
               "rounded-md px-3 py-1 text-xs font-medium transition-colors",
               active
                 ? "bg-background text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground",
+              option.disabled &&
+                "hover:text-muted-foreground cursor-not-allowed opacity-40",
             )}
           >
             {option.label}

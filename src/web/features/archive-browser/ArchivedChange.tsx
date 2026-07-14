@@ -1,8 +1,15 @@
+import type { ArchivedDelta } from "@shared/contracts";
 import { api } from "@/lib/api";
 import { useAsync } from "@/lib/use-async";
 import { Markdown } from "@/components/Markdown";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import type { ArtifactProvider } from "@/features/change-artifacts/ArtifactBrowser";
+import {
+  ArtifactBrowser,
+  ArtifactEmpty,
+  ARTIFACT_LABELS,
+  orderedArtifactTabs,
+} from "@/features/change-artifacts/ArtifactBrowser";
 import { Loader2, Lock } from "lucide-react";
 
 interface Props {
@@ -10,15 +17,12 @@ interface Props {
   revision: number;
 }
 
-const ARTIFACT_LABEL: Record<string, string> = {
-  proposal: "Proposal",
-  design: "Design",
-  tasks: "Tasks",
-};
-
 /**
- * A frozen, read-only view of an archived change: its artifacts and delta specs
- * rendered as markdown. No editing or re-running is offered (archive-browser).
+ * A frozen, read-only view of an archived change, read through the same
+ * artifact nav as an active change: Proposal, Design, Tasks, Spec changes, one
+ * at a time. The archived payload already carries every artifact and delta, so
+ * the provider is built from in-memory content — no per-tab fetching. No
+ * editing or re-running is offered.
  */
 export function ArchivedChange({ id, revision }: Props) {
   const { data, error, loading } = useAsync(
@@ -38,8 +42,32 @@ export function ArchivedChange({ id, revision }: Props) {
     );
   if (!data) return null;
 
+  // `data.artifacts` only ever holds proposal/design/tasks (a README in the
+  // archive directory is never included), so it is not a nav destination.
+  const has = (artifactId: string) =>
+    data.artifacts.some((a) => a.id === artifactId);
+
+  const provider: ArtifactProvider = {
+    tabs: orderedArtifactTabs({
+      proposal: has("proposal"),
+      design: has("design"),
+      tasks: has("tasks"),
+      "spec-changes": data.deltas.length > 0,
+    }),
+    renderArtifact: (artifactId) => {
+      if (artifactId === "spec-changes")
+        return <ArchivedDeltas deltas={data.deltas} />;
+      const artifact = data.artifacts.find((a) => a.id === artifactId);
+      return artifact ? (
+        <Markdown className="mx-auto max-w-3xl">{artifact.content}</Markdown>
+      ) : (
+        <ArtifactEmpty label={ARTIFACT_LABELS[artifactId].toLowerCase()} />
+      );
+    },
+  };
+
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-8">
+    <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
           <h1 className="font-display text-2xl font-semibold">{data.name}</h1>
@@ -53,48 +81,24 @@ export function ArchivedChange({ id, revision }: Props) {
         </p>
       </header>
 
-      {data.artifacts.map((artifact) => (
-        <Section
-          key={artifact.id}
-          title={ARTIFACT_LABEL[artifact.id] ?? artifact.id}
-        >
-          <Markdown>{artifact.content}</Markdown>
-        </Section>
-      ))}
-
-      {data.deltas.length > 0 && (
-        <Section title="Delta specs">
-          <div className="flex flex-col gap-6">
-            {data.deltas.map((delta) => (
-              <div key={delta.spec}>
-                <p className="text-muted-foreground mb-1 font-mono text-xs">
-                  {delta.spec}
-                </p>
-                <Markdown>{delta.content}</Markdown>
-              </div>
-            ))}
-          </div>
-        </Section>
-      )}
+      <ArtifactBrowser provider={provider} />
     </div>
   );
 }
 
-function Section({
-  title,
-  children,
-  className,
-}: {
-  title: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
+function ArchivedDeltas({ deltas }: { deltas: ArchivedDelta[] }) {
+  if (deltas.length === 0) return <ArtifactEmpty label="spec changes" />;
+
   return (
-    <section className={cn("flex flex-col gap-2", className)}>
-      <h2 className="text-muted-foreground border-border border-b pb-1 text-xs font-semibold tracking-wide uppercase">
-        {title}
-      </h2>
-      {children}
-    </section>
+    <div className="mx-auto flex max-w-3xl flex-col gap-6">
+      {deltas.map((delta) => (
+        <div key={delta.spec}>
+          <p className="text-muted-foreground mb-1 font-mono text-xs">
+            {delta.spec}
+          </p>
+          <Markdown>{delta.content}</Markdown>
+        </div>
+      ))}
+    </div>
   );
 }
