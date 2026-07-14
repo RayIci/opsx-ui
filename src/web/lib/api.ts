@@ -1,5 +1,6 @@
 import type {
   ArchivedChangeDetail,
+  ChangeArtifactManifest,
   DeltaView,
   ProjectView,
   RawDocument,
@@ -58,6 +59,11 @@ export const api = {
   status: (changeId: string) =>
     fetch(`/api/changes/${encodeURIComponent(changeId)}/status`).then(
       json<StatusView>,
+    ),
+
+  artifacts: (changeId: string) =>
+    fetch(`/api/changes/${encodeURIComponent(changeId)}/artifacts`).then(
+      json<ChangeArtifactManifest>,
     ),
 
   archived: (id: string) =>

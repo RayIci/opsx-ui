@@ -164,6 +164,13 @@ export class ViewerServer {
     );
 
     api.get(
+      "/changes/:id/artifacts",
+      this.guarded(async (req, res, session) => {
+        res.json(await session.getChangeArtifactManifest(req.params.id));
+      }),
+    );
+
+    api.get(
       "/archive/:id",
       this.guarded(async (req, res, session) => {
         res.json(await session.getArchivedChange(req.params.id));
