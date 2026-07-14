@@ -19,7 +19,6 @@ jobs:
   publish:
     needs: checks
     runs-on: ubuntu-latest
-    # Must match the Environment configured on the npm trusted publisher.
     environment: npm-publish
     permissions:
       contents: read
