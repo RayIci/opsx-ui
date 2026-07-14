@@ -43,15 +43,31 @@ export function orderedArtifactTabs(
   }));
 }
 
-/** The tab a drill-in opens on: Proposal when present, else the first artifact
- *  the change actually has (a brand-new change may only have a proposal). */
-function defaultTab(tabs: ArtifactTab[]): ArtifactId {
-  const proposal = tabs.find((t) => t.id === "proposal");
-  if (proposal?.available) return "proposal";
+/**
+ * The tab a drill-in opens on: the user's configured default when it's present
+ * on this change, else Proposal when present, else the first artifact the change
+ * actually has (a brand-new change may only have a proposal). Never returns a
+ * disabled tab.
+ */
+function defaultTab(
+  tabs: ArtifactTab[],
+  available: Set<ArtifactId>,
+  preferred?: ArtifactId | null,
+): ArtifactId {
+  if (preferred && available.has(preferred)) return preferred;
+  if (available.has("proposal")) return "proposal";
   return tabs.find((t) => t.available)?.id ?? "proposal";
 }
 
-export function ArtifactBrowser({ provider }: { provider: ArtifactProvider }) {
+export function ArtifactBrowser({
+  provider,
+  preferredDefault,
+}: {
+  provider: ArtifactProvider;
+  /** The user's configured default tab; falls back to Proposal when unset or
+   *  absent on this change. */
+  preferredDefault?: ArtifactId | null;
+}) {
   const [selected, setSelected] = useState<ArtifactId | null>(null);
 
   // Follow the SpecDiff pattern: keep the user's pick only while it points at an
@@ -62,7 +78,9 @@ export function ArtifactBrowser({ provider }: { provider: ArtifactProvider }) {
     provider.tabs.filter((t) => t.available).map((t) => t.id),
   );
   const active =
-    selected && available.has(selected) ? selected : defaultTab(provider.tabs);
+    selected && available.has(selected)
+      ? selected
+      : defaultTab(provider.tabs, available, preferredDefault);
 
   const options = provider.tabs.map((t) => ({
     value: t.id,

@@ -12,6 +12,7 @@ import { SpecDiff } from "@/features/spec-diff/SpecDiff";
 import { api } from "@/lib/api";
 import { useAsync } from "@/lib/use-async";
 import { useLiveState } from "@/lib/live-store";
+import { useSettings } from "@/lib/settings-store";
 import { Loader2 } from "lucide-react";
 import { BackLink } from "./shared";
 
@@ -44,6 +45,7 @@ export function ChangePage() {
  */
 function LiveArtifacts({ name, revision }: { name: string; revision: number }) {
   const manifest = useAsync(() => api.artifacts(name), [name, revision]);
+  const settings = useSettings();
 
   if (manifest.loading && !manifest.data)
     return (
@@ -80,5 +82,10 @@ function LiveArtifacts({ name, revision }: { name: string; revision: number }) {
     },
   };
 
-  return <ArtifactBrowser provider={provider} />;
+  return (
+    <ArtifactBrowser
+      provider={provider}
+      preferredDefault={settings.defaultArtifactTab}
+    />
+  );
 }
