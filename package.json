@@ -2,7 +2,7 @@
   "name": "opsx-ui",
   "version": "0.2.0",
   "description": "A read-only, live-updating web viewer for everything OpenSpec touches.",
-   "repository": {
+  "repository": {
     "type": "git",
     "url": "git+https://github.com/RayIci/opsx-ui.git"
   },
@@ -14,9 +14,7 @@
   "bin": {
     "opsx-ui": "dist/cli/index.js"
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "engines": {
     "node": ">=18"
   },
@@ -39,13 +37,8 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,css,md}": [
-      "prettier --write"
-    ]
+    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,css,md}": ["prettier --write"]
   },
   "dependencies": {
     "chokidar": "^4.0.3",
