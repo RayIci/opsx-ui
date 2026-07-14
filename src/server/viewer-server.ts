@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { ViewerSession } from "./session.js";
 import { ProjectResolver } from "./project-resolver.js";
+import { FileSettingsStore, type SettingsStore } from "../core/index.js";
 import type { ProjectView, ServerMessage } from "@shared/contracts.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -30,6 +31,9 @@ export class ViewerServer {
   private readonly wss: WebSocketServer;
   private readonly clients = new Set<WebSocket>();
   private session: ViewerSession | null = null;
+  /** User settings are global (not tied to a project), so the server owns the
+   *  store directly rather than the per-project session. */
+  private readonly settings: SettingsStore = new FileSettingsStore();
 
   constructor(private readonly options: ViewerServerOptions) {
     this.app = express();
@@ -184,6 +188,20 @@ export class ViewerServer {
         res.json(await session.getRawDocument(rel));
       }),
     );
+
+    // Settings are global user preferences — reachable with or without an open
+    // project. Writes go only to the user config dir, never a project.
+    api.get("/settings", async (_req, res) => {
+      res.json(await this.settings.read());
+    });
+
+    api.put("/settings", async (req: Request, res: Response) => {
+      try {
+        res.json(await this.settings.write(req.body ?? {}));
+      } catch (error) {
+        res.status(500).json({ error: (error as Error).message });
+      }
+    });
 
     this.app.use("/api", api);
   }

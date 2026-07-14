@@ -4,6 +4,7 @@ import type {
   DeltaView,
   ProjectView,
   RawDocument,
+  Settings,
   Snapshot,
   SpecView,
   StatusView,
@@ -70,4 +71,14 @@ export const api = {
     fetch(`/api/archive/${encodeURIComponent(id)}`).then(
       json<ArchivedChangeDetail>,
     ),
+
+  settings: {
+    get: () => fetch("/api/settings").then(json<Settings>),
+    put: (patch: Partial<Settings>) =>
+      fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patch),
+      }).then(json<Settings>),
+  },
 };

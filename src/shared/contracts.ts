@@ -27,6 +27,14 @@ export interface ChangeArtifactManifest {
   tasks: boolean;
   deltaCount: number;
 }
+
+/** Durable per-user viewer preferences, persisted to an OS config file.
+ *  `version` is a forward-migration seam; `null` means "use the built-in
+ *  default" (Proposal) rather than a pinned tab. */
+export interface Settings {
+  version: 1;
+  defaultArtifactTab: ArtifactId | null;
+}
 export type ArtifactStatus = "ready" | "blocked" | "done" | "pending" | string;
 export type ActivityKind = "created" | "modified" | "removed";
 export type ProjectSource = "cwd" | "store" | "picked";

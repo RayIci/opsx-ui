@@ -4,9 +4,11 @@ A read-only, live-updating **web viewer for everything OpenSpec touches** — a
 browser home for your specs, changes, and proposed deltas that replaces the
 `openspec view` TUI and updates _as agents work_.
 
-> opsx-ui only **reads** OpenSpec state. It never writes to, or mutates, any
-> project's `openspec/` directory. Driving agents (propose / apply / archive) is
-> intentionally out of scope for now.
+> opsx-ui only **reads** project OpenSpec state. It never writes to, or mutates,
+> any project's `openspec/` directory. (Your own viewer preferences are the sole
+> exception — they are saved to an OS user-config file, never inside a project.)
+> Driving agents (propose / apply / archive) is intentionally out of scope for
+> now.
 
 ## Install
 

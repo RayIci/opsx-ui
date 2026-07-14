@@ -1,6 +1,7 @@
 import type { ArchivedDelta } from "@shared/contracts";
 import { api } from "@/lib/api";
 import { useAsync } from "@/lib/use-async";
+import { useSettings } from "@/lib/settings-store";
 import { Markdown } from "@/components/Markdown";
 import { Badge } from "@/components/ui/badge";
 import type { ArtifactProvider } from "@/features/change-artifacts/ArtifactBrowser";
@@ -29,6 +30,7 @@ export function ArchivedChange({ id, revision }: Props) {
     () => api.archived(id),
     [id, revision],
   );
+  const settings = useSettings();
 
   if (loading && !data)
     return (
@@ -81,7 +83,10 @@ export function ArchivedChange({ id, revision }: Props) {
         </p>
       </header>
 
-      <ArtifactBrowser provider={provider} />
+      <ArtifactBrowser
+        provider={provider}
+        preferredDefault={settings.defaultArtifactTab}
+      />
     </div>
   );
 }
