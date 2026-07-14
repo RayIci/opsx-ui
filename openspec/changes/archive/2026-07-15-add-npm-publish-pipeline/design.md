@@ -33,8 +33,14 @@ The public-repo secret-safety requirement hinges on this. `on: pull_request` run
 
 *Alternative considered:* release on GitHub Releases (`on: release`) — equivalent, but tag-push is the maintainer's stated trigger and needs no extra Release object.
 
-### Secret isolation + provenance in the release job only
-`actions/setup-node` with `registry-url: https://registry.npmjs.org` writes an auth-configured `.npmrc`; `NODE_AUTH_TOKEN` is set from the `NPM_TOKEN` secret **only** in the release job. Publish runs `npm publish --provenance --access public`, so the release job declares `permissions: { contents: read, id-token: write }` for OIDC provenance. Optionally the publish job targets a protected `npm-publish` GitHub Environment (required reviewers) for a human gate before the token is used. PR checks declare `permissions: { contents: read }` and reference no secrets.
+### Trusted publishing (OIDC) in the release job only — no long-lived token
+**Revised during implementation.** The original plan set `NODE_AUTH_TOKEN` from an `NPM_TOKEN` repository secret. What shipped instead is npm **trusted publishing**: the release job authenticates to the registry with GitHub's short-lived OIDC identity, and there is no `NPM_TOKEN` secret anywhere in the repository. This is strictly better on the axis the whole change cared about — the safest secret is the one that does not exist, so there is nothing to leak, rotate, or scope. `permissions: { id-token: write }` now covers both provenance *and* authentication. The publish job targets a protected `npm-publish` GitHub Environment (no longer "optional") for a human gate before a release runs. PR checks declare `permissions: { contents: read }`, so they can neither read a secret nor mint a publishing identity.
+
+Two operational consequences, both learned the hard way from failed releases:
+- **The runner's npm is too old.** Node 22 ships npm 10.x; trusted publishing needs npm ≥ 11.5.1, so the job installs a current npm before publishing. Without it the publish fails on a mechanism that looks configured.
+- **Provenance is verified against `repository.url`.** npm rejects the publish (`422`, "Failed to validate repository information") if the manifest's repository is empty or does not match the building repository. This is not optional metadata once `--provenance` is on; it is part of the publish contract, and is now its own requirement.
+
+*Alternative considered (originally chosen):* `NPM_TOKEN` automation secret — rejected once trusted publishing was available; it reintroduces a long-lived credential to protect for no benefit.
 
 ### `prepublishOnly` build for defense in depth
 Add `"prepublishOnly": "npm run build"` so any publish — CI or a maintainer's local `npm publish` — rebuilds `dist/` first and can never ship stale output. The release workflow also builds explicitly as part of the gate; the extra build is cheap.

@@ -44,9 +44,13 @@ The system SHALL prevent a pull request from merging into `main` while its requi
 - **WHEN** a pull request's required checks have all passed
 - **THEN** merging the pull request is permitted
 
-### Requirement: Pull-request checks have no access to release secrets
-Because the repository is public, the system SHALL run pull-request checks without exposing publish credentials, so that contributions — including those from forks — cannot read release secrets.
+### Requirement: Pull-request checks cannot publish
+Because the repository is public and anyone may open a pull request, the system SHALL run pull-request checks without the ability to publish — neither holding publish credentials nor able to obtain a publishing identity — so that a contribution can never release the package or exfiltrate the means to do so.
 
 #### Scenario: Pull request from a fork
 - **WHEN** the checks pipeline runs for a pull request from a forked repository
-- **THEN** it runs without access to the npm publish token or other release secrets
+- **THEN** it runs with no publish credentials and no ability to assume a publishing identity
+
+#### Scenario: A pull request attempts to publish
+- **WHEN** a pull request's code attempts to publish the package
+- **THEN** it cannot authenticate to the registry and no release occurs
