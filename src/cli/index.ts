@@ -4,7 +4,7 @@ import open from "open";
 import path from "node:path";
 import { ViewerServer } from "../server/viewer-server.js";
 import { ProjectResolver } from "../server/project-resolver.js";
-import type { ProjectView } from "@shared/contracts.js";
+import type { ProjectView } from "../shared/contracts.js";
 
 const DEFAULT_PORT = 4573;
 

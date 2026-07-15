@@ -11,7 +11,7 @@ import type {
   ValidationIssue,
   ValidationStatus,
   ValidationView,
-} from "@shared/contracts.js";
+} from "../shared/contracts.js";
 
 /**
  * Pure mappers from raw `openspec … --json` output to typed view-models.

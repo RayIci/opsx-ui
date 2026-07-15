@@ -3,7 +3,7 @@ import type {
   ArchivedChangeSummary,
   ChangeArtifactManifest,
   RawDocument,
-} from "@shared/contracts.js";
+} from "../shared/contracts.js";
 
 /**
  * Read-only access to things the `openspec` CLI cannot see: raw markdown

@@ -1,6 +1,6 @@
 import type { OpenSpecSource } from "./openspec-source.js";
 import type { ArchiveSource } from "./archive-source.js";
-import type { ProjectView, Snapshot } from "@shared/contracts.js";
+import type { ProjectView, Snapshot } from "../shared/contracts.js";
 import { toValidationStatus } from "./mappers.js";
 
 /**

@@ -1,7 +1,7 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { execFile } from "node:child_process";
-import type { ProjectSource, ProjectView } from "@shared/contracts.js";
+import type { ProjectSource, ProjectView } from "../shared/contracts.js";
 
 export interface RegisteredStore {
   id: string;
