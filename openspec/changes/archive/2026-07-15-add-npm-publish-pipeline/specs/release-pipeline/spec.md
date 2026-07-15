@@ -44,17 +44,35 @@ The system SHALL verify that the pushed tag matches the package's declared `vers
 - **WHEN** the pushed tag's version differs from `package.json`'s `version`
 - **THEN** the release fails and nothing is published
 
-### Requirement: Freshly built, authenticated, attributable publish
-The system SHALL publish freshly built output, authenticated with a repository secret, with public access and build provenance; and publish credentials SHALL be reachable only by the release job, not by pull-request checks.
+### Requirement: Freshly built, attributable publish without a long-lived credential
+The system SHALL publish freshly built output with public access and build provenance, authenticating through the CI provider's short-lived workload identity rather than a long-lived publish token held in the repository; and the ability to publish SHALL be available only to the release job, never to pull-request checks.
 
-#### Scenario: Missing credentials
-- **WHEN** the npm authentication token is not configured
+#### Scenario: The release workflow is not an authorized publisher
+- **WHEN** the registry does not recognize the release workflow as authorized to publish the package
 - **THEN** the publish fails rather than publishing anonymously or silently succeeding
 
-#### Scenario: Successful authenticated publish
-- **WHEN** the token is configured and a release publishes
+#### Scenario: Successful publish
+- **WHEN** an authorized release publishes
 - **THEN** the package is published with freshly built contents, public access, and provenance attesting the build source
 
 #### Scenario: Publishing locally
 - **WHEN** a maintainer runs `npm publish` locally
 - **THEN** a build runs automatically before the package contents are assembled
+
+### Requirement: The package declares the repository it is built from
+The system SHALL declare the package's source repository in its manifest, matching the repository the release is built from, because provenance is verified against that declaration and an absent or mismatched one causes the registry to reject the publish.
+
+#### Scenario: Repository is not declared, or does not match
+- **WHEN** a release is attempted for a package whose declared source repository is absent or differs from the repository the build ran in
+- **THEN** the publish is rejected rather than released without verifiable provenance
+
+#### Scenario: Repository declaration matches
+- **WHEN** the declared source repository matches the repository the release is built from
+- **THEN** provenance is verified and the package is published
+
+### Requirement: The release toolchain supports the publishing method
+The system SHALL run the publish with tooling new enough to authenticate by workload identity, so a release cannot fail merely because the runner's default package manager predates the mechanism.
+
+#### Scenario: The runner's default tooling is too old
+- **WHEN** the release runs on an environment whose default package manager cannot authenticate by workload identity
+- **THEN** the release uses a version that can, rather than failing or falling back to an unauthenticated publish

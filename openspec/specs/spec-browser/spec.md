@@ -1,7 +1,7 @@
 # spec-browser Specification
 
 ## Purpose
-The drill-down view for browsing the project's current specifications — capabilities, their requirements, and scenarios — reachable directly or by navigating from a change to the specs it affects.
+The drill-down view for browsing the project's current specifications — capabilities, their requirements, and scenarios — reachable directly or by navigating from a change to the specs it affects. This capability owns *which* specification is listed and shown; how its document renders is owned by `markdown-rendering`.
 
 ## Requirements
 
@@ -35,10 +35,10 @@ The system SHALL update the displayed specification automatically when its under
 - **WHEN** a specification file changes while it is displayed
 - **THEN** the displayed content updates without a manual refresh
 
-### Requirement: Markdown rendering of spec content
-The system SHALL render a selected capability as its full specification document in formatted markdown — headings, requirements, and scenarios as authored on disk — rather than as reconstructed requirement cards or monospaced boxes.
+### Requirement: A capability is shown as its full specification document
+The system SHALL show a selected capability as its complete specification document as authored on disk — rather than as reconstructed requirement cards or monospaced boxes — leaving how that document renders to `markdown-rendering`.
 
 #### Scenario: Viewing a capability's specification
 - **WHEN** a user views a capability on the Specs page
-- **THEN** its complete `spec.md` document is rendered as formatted markdown
+- **THEN** its complete `spec.md` document is shown
 - **AND** it is not displayed as reconstructed requirement cards or inside monospaced boxes

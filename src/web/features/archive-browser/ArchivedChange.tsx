@@ -3,6 +3,7 @@ import { api } from "@/lib/api";
 import { useAsync } from "@/lib/use-async";
 import { useSettings } from "@/lib/settings-store";
 import { Markdown } from "@/components/Markdown";
+import { DocumentView } from "@/components/DocumentView";
 import { Badge } from "@/components/ui/badge";
 import type { ArtifactProvider } from "@/features/change-artifacts/ArtifactBrowser";
 import {
@@ -61,7 +62,9 @@ export function ArchivedChange({ id, revision }: Props) {
         return <ArchivedDeltas deltas={data.deltas} />;
       const artifact = data.artifacts.find((a) => a.id === artifactId);
       return artifact ? (
-        <Markdown className="mx-auto max-w-3xl">{artifact.content}</Markdown>
+        <DocumentView className="mx-auto max-w-5xl">
+          {artifact.content}
+        </DocumentView>
       ) : (
         <ArtifactEmpty label={ARTIFACT_LABELS[artifactId].toLowerCase()} />
       );

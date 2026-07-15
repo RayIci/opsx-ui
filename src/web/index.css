@@ -39,6 +39,13 @@
   --op-removed: oklch(0.637 0.208 25.331);
   --op-removed-soft: oklch(0.637 0.208 25.331 / 12%);
 
+  /* Syntax tokens. Deliberately lower-chroma than the operation colors and on
+   * hues that avoid them (added 163 / modified 58 / removed 25), so code reads
+   * as code without competing with the only saturated semantics in the app. */
+  --syntax-keyword: oklch(0.5 0.12 300);
+  --syntax-string: oklch(0.48 0.09 195);
+  --syntax-value: oklch(0.48 0.11 258);
+
   --font-sans: "Figtree", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Bricolage Grotesque", "Figtree", sans-serif;
   --font-mono: "Spline Sans Mono", ui-monospace, monospace;
@@ -70,6 +77,10 @@
   --op-modified-soft: oklch(0.769 0.166 70.08 / 16%);
   --op-removed: oklch(0.704 0.191 22.216);
   --op-removed-soft: oklch(0.704 0.191 22.216 / 18%);
+
+  --syntax-keyword: oklch(0.78 0.11 300);
+  --syntax-string: oklch(0.78 0.09 195);
+  --syntax-value: oklch(0.76 0.1 258);
 }
 
 @theme inline {
@@ -234,9 +245,14 @@
     color: var(--color-muted-foreground);
     margin: 0.75em 0;
   }
+  /* Wide tables scroll inside their own container so the page never scrolls
+   * horizontally. */
+  .md-prose .md-table-wrap {
+    overflow-x: auto;
+    margin: 0.75em 0;
+  }
   .md-prose table {
     border-collapse: collapse;
-    margin: 0.75em 0;
     font-size: 0.82rem;
   }
   .md-prose th,
@@ -244,6 +260,198 @@
     border: 1px solid var(--color-border);
     padding: 0.35em 0.6em;
     text-align: left;
+  }
+  .md-prose thead th {
+    background: var(--color-muted);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* A reference to a known artifact: subtle, so ~8 per document read as prose
+   * with affordance rather than a wall of links. */
+  .md-prose a.os-artifact-link {
+    text-decoration: none;
+    border-bottom: 1px dashed var(--color-border);
+  }
+  .md-prose a.os-artifact-link:hover {
+    border-bottom-color: var(--color-primary);
+  }
+  .md-prose a.os-artifact-link code {
+    color: var(--color-primary);
+    cursor: pointer;
+  }
+
+  /* --- Document navigation ---------------------------------------------- */
+
+  /* Headings own their anchor control; scroll-margin keeps a deep-linked
+   * section clear of the sticky header on arrival. */
+  .md-prose :is(h1, h2, h3, h4)[id] {
+    scroll-margin-top: 5rem;
+  }
+  /* The arrival marker: brief, so a deep-linked requirement is identifiable
+   * without permanently decorating the document. */
+  .md-prose [data-os-target] {
+    animation: pulse-once 1.4s ease-out;
+    border-radius: var(--radius-sm);
+  }
+
+  /* --- OpenSpec document semantics -------------------------------------
+   * Typographic distinction of authored content — never reconstructed cards
+   * (spec-browser requires documents render as documents). Hierarchy:
+   * requirement loudest, scenario subordinate, SHALL a light inline mark. */
+
+  /* A requirement: the scannable unit a spec is made of. */
+  .md-prose [data-os="requirement"] {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    border-left: 3px solid var(--color-border);
+    padding: 0.1em 0 0.1em 0.7em;
+    margin: 1.6em 0 0.6em;
+  }
+
+  /* A scenario: subordinate to its requirement. */
+  .md-prose [data-os="scenario"] {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--color-foreground);
+    border-left: 2px solid var(--color-border);
+    padding: 0 0 0 0.7em;
+    margin: 1em 0 0.35em 0.7em;
+  }
+  .md-prose [data-os="scenario"]::before {
+    content: "Scenario";
+    display: block;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted-foreground);
+  }
+
+  /* WHEN / THEN / AND steps: a condition → outcome sequence. */
+  .md-prose li[data-os="step"] {
+    list-style: none;
+    margin-left: 0.7em;
+    padding-left: 0.9em;
+    border-left: 2px solid var(--color-border);
+  }
+  .md-prose li[data-os="step"] strong:first-child {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    padding: 0.05em 0.3em;
+    border-radius: var(--radius-sm);
+    margin-right: 0.15em;
+  }
+  /* Conditions read as the setup … */
+  .md-prose li[data-os-step="when"] strong:first-child {
+    background: var(--color-muted);
+    color: var(--color-muted-foreground);
+  }
+  /* … outcomes as the consequence. */
+  .md-prose li[data-os-step="then"] strong:first-child {
+    background: var(--op-added-soft);
+    color: var(--color-op-added);
+  }
+  .md-prose li[data-os-step="and"] {
+    border-left-color: transparent;
+  }
+  .md-prose li[data-os-step="and"] strong:first-child {
+    background: transparent;
+    color: var(--color-muted-foreground);
+  }
+
+  /* The normative keyword: visible, not shouted (149 of them). */
+  .md-prose .os-shall {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    font-style: normal;
+    font-weight: 600;
+    color: var(--color-foreground);
+  }
+
+  /* Delta operation grouping — badge comes from operations.ts, not CSS. */
+  .md-prose h2.os-operation {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+
+  /* A rendered diagram. The container reserves space while mermaid draws, so
+   * the document does not reflow as diagrams appear. */
+  .md-prose .md-mermaid {
+    margin: 0.75em 0;
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+  }
+  .md-prose .md-mermaid[data-drawing] {
+    min-height: 6rem;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+  }
+  .md-prose .md-mermaid svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Code block + its copy overlay. The wrapper carries the margin so the
+   * overlay positions against the block, not the prose flow. */
+  .md-prose .md-code {
+    margin: 0.75em 0;
+  }
+  .md-prose .md-code pre {
+    margin: 0;
+  }
+
+  /* Syntax tokens. Untagged fences never receive these classes (detect:false),
+   * so ASCII diagrams render as plain preformatted text. */
+  .md-prose .hljs-comment,
+  .md-prose .hljs-quote {
+    color: var(--color-muted-foreground);
+    font-style: italic;
+  }
+  .md-prose .hljs-meta,
+  .md-prose .hljs-punctuation,
+  .md-prose .hljs-params {
+    color: var(--color-muted-foreground);
+  }
+  .md-prose .hljs-keyword,
+  .md-prose .hljs-selector-tag,
+  .md-prose .hljs-literal,
+  .md-prose .hljs-type,
+  .md-prose .hljs-built_in,
+  .md-prose .hljs-tag {
+    color: var(--syntax-keyword);
+  }
+  .md-prose .hljs-string,
+  .md-prose .hljs-regexp,
+  .md-prose .hljs-symbol,
+  .md-prose .hljs-bullet,
+  .md-prose .hljs-addition {
+    color: var(--syntax-string);
+  }
+  .md-prose .hljs-number,
+  .md-prose .hljs-title,
+  .md-prose .hljs-section,
+  .md-prose .hljs-name,
+  .md-prose .hljs-attr,
+  .md-prose .hljs-attribute,
+  .md-prose .hljs-property,
+  .md-prose .hljs-variable,
+  .md-prose .hljs-selector-class,
+  .md-prose .hljs-selector-id {
+    color: var(--syntax-value);
+  }
+  .md-prose .hljs-emphasis {
+    font-style: italic;
+  }
+  .md-prose .hljs-strong {
+    font-weight: 600;
+  }
+  .md-prose .hljs-deletion {
+    color: var(--color-op-removed);
   }
   .md-prose hr {
     border: 0;
