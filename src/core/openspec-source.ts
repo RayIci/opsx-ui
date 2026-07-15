@@ -5,7 +5,7 @@ import type {
   SpecView,
   StatusView,
   ValidationView,
-} from "@shared/contracts.js";
+} from "../shared/contracts.js";
 
 /**
  * The single seam between opsx-ui and OpenSpec (design D2).

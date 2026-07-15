@@ -17,7 +17,7 @@ import type {
   Snapshot,
   SpecView,
   StatusView,
-} from "@shared/contracts.js";
+} from "../shared/contracts.js";
 
 export interface SessionEvents {
   onSnapshot: (snapshot: Snapshot) => void;

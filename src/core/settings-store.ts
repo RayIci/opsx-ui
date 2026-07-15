@@ -1,8 +1,8 @@
 import envPaths from "env-paths";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
-import type { ArtifactId, Settings } from "@shared/contracts.js";
-import { ARTIFACT_IDS } from "@shared/contracts.js";
+import type { ArtifactId, Settings } from "../shared/contracts.js";
+import { ARTIFACT_IDS } from "../shared/contracts.js";
 
 /** The settings a fresh install starts from: no pinned tab. */
 export const DEFAULT_SETTINGS: Settings = {

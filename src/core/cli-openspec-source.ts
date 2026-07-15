@@ -7,7 +7,7 @@ import type {
   SpecView,
   StatusView,
   ValidationView,
-} from "@shared/contracts.js";
+} from "../shared/contracts.js";
 import {
   mapChangeList,
   mapDeltas,

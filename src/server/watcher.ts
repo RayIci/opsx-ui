@@ -1,7 +1,7 @@
 import path from "node:path";
 import chokidar, { type FSWatcher } from "chokidar";
 import { randomUUID } from "node:crypto";
-import type { ActivityEntry, ActivityKind } from "@shared/contracts.js";
+import type { ActivityEntry, ActivityKind } from "../shared/contracts.js";
 
 export interface WatcherOptions {
   /** Coalesce bursts of edits into one snapshot rebuild (live-sync spec). */

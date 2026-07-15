@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import { ViewerSession } from "./session.js";
 import { ProjectResolver } from "./project-resolver.js";
 import { FileSettingsStore, type SettingsStore } from "../core/index.js";
-import type { ProjectView, ServerMessage } from "@shared/contracts.js";
+import type { ProjectView, ServerMessage } from "../shared/contracts.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 /** dist/server/server → dist/web */

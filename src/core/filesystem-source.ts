@@ -9,8 +9,8 @@ import type {
   ChangeArtifactManifest,
   RawDocument,
   TaskProgress,
-} from "@shared/contracts.js";
-import { DOCUMENT_ARTIFACT_IDS } from "@shared/contracts.js";
+} from "../shared/contracts.js";
+import { DOCUMENT_ARTIFACT_IDS } from "../shared/contracts.js";
 import { OpenSpecCliError } from "./errors.js";
 
 const DATE_PREFIX = /^(\d{4}-\d{2}-\d{2})-(.+)$/;
