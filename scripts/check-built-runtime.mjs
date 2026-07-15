@@ -2,7 +2,10 @@ import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const rootDir = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+);
 const distDir = path.join(rootDir, "dist");
 const nodeOutputDirs = ["cli", "server", "core"].map((dir) =>
   path.join(distDir, dir),
